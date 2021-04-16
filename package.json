@@ -10,6 +10,9 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
-    "pdfmake": "^0.1.71"
+    "mysql": "^2.18.1",
+    "nanoid": "^3.1.22",
+    "pdfmake": "^0.1.71",
+    "sqlite3": "^5.0.2"
   }
 }
