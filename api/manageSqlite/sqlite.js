@@ -11,14 +11,11 @@ const db= new sqlite3.Database('./data/db.sqlite', sqlite3.OPEN_READWRITE,(err)=
 function readTable(query){
     return new Promise((resolve,reject)=>{
         db.serialize(()=>{
-            db.all(query, function(err,tables){     
+            db.all(query, function(err,rows){     
             if(err){
                 return reject(err)
             }
-            /* tables.forEach((table)=>{
-                console.log('[READ:]',table);
-            }) */
-            resolve(tables);
+            resolve(rows);
             });
         });
     })

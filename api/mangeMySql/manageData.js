@@ -1,6 +1,20 @@
 const {nanoid} = require('nanoid');
-const store = require('./mysql');
-function writeProject(table,predata){
+function formatData(table,predata){
+    let data ={};
+    switch (table){
+        case 'project':
+            data = dataFormatProyect(predata);
+            break;
+        case 'visitor':
+            data = dataFormatVisitor(predata);
+            break;
+        default:
+            data= null;
+            throw new Error('Data format do not find');
+    }
+    return data;
+}
+function dataFormatProyect(predata){
     let data = {};
     let client_project_id=nanoid();
     let created_at=formatDate(predata.created_at);
@@ -19,10 +33,24 @@ function writeProject(table,predata){
         is_deleted:1,
         tenant_id:predata.tenant_id,
     }
-
-    return store.insert(table,data);
+    return data;
+}
+////////////////////////////////////
+function dataFormatVisitor(predata){
+    let data = {};
+    data={
+        visitor_id:predata.mobile_visitor_id,
+        dni:predata.dni,
+        first_name:predata.first_name,
+        last_name:predata.last_name,
+        is_deleted:1,
+        tenant_id:predata.tenant_id,
+        client_project_id:'23',
+    }
+    return data;
 }
 
+////////////////////////////////////
 function formatDate(indexPie){
     let date = new Date(indexPie);
     let year = date.getUTCFullYear();
@@ -31,5 +59,5 @@ function formatDate(indexPie){
     return (year + "-" + month + "-" + day);
 }
 module.exports={
-    writeProject,
+    formatData,
 }
