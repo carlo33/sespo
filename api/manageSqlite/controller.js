@@ -1,41 +1,53 @@
 const store = require('./sqlite');
 const controllerMysql = require('../mangeMySql/controller');
-const manageData = require('../mangeMySql/manageData'); 
+const formatData = require('../mangeMySql/formatData'); 
+const config = require('../../config');
 
 const query = ['SELECT entity_id, payload, action FROM synchronizes WHERE is_synchronized = 0 AND entity_code="T001"',
-'SELECT entity_id, payload, action FROM synchronizes WHERE is_synchronized = 0 AND entity_code="T005"'];
-const nameTables = ['project','visitor'];
+'SELECT entity_id, payload, action FROM synchronizes WHERE is_synchronized = 0 AND entity_code="T005"',
+'SELECT entity_id, payload, action FROM synchronizes WHERE is_synchronized = 0 AND entity_code="T008"'];
+const nameTables = ['project','visitor','visitor_details'];
 
-async function readData(){
+async function synchronizeData(req,res){
     try{
         for (let q=0;q<query.length;q++){
             let data={};
             let dataSqlite= await store.readTable(query[q]);
+            let clientProjectId=config.api.project;
+            console.log(dataSqlite);
             if (dataSqlite.length>1){
                 for(let i=0;i<dataSqlite.length;i++){
                     let predata = JSON.parse(dataSqlite[i].payload);
-                    data =  manageData.formatData(nameTables[q],predata)
-                    console.log(nameTables[q],data);
-                    await controllerMysql.writeMysql(nameTables[q],data);
+                    let visitorId= predata.visitor_id;
+                    switch (dataSqlite[i].action){
+                        case 'CREATE':
+                            data =  formatData.formatData(nameTables[q],predata);
+                            console.log(nameTables[q],data);
+                            await controllerMysql.writeMysql(nameTables[q],data);
+                            break;
+                        case 'UPDATE':
+                            data =formatData.formatData(nameTables[q],predata);
+                            await controllerMysql.updateMysql(nameTables[q],data,clientProjectId,visitorId);
+                            break;
+                        case 'DELETE':
+                            await controllerMysql.deletedMysql(nameTables[q],clientProjectId,visitorId);
+                            break;
+                        default: 
+                        throw new Error ('Action invalided');
+                    }
                 }
             }else{
                 let predata = JSON.parse(dataSqlite[0].payload);
-                //console.log(nameTables[q],predata);
-                data =  manageData.formatData(nameTables[q],predata)
+                data =  formatData.formatData(nameTables[q],predata)
                 console.log(nameTables[q],data);
                 await controllerMysql.writeMysql(nameTables[q],data);
             }
-            //console.log(dataSqlite);
         }
-        /* let data2 = JSON.parse(result2[0].payload);
-        await controllerMysql.writeVisitor('visitor',data2); */
         return true;
-        /* let result2 = await store.readTable(query[1]);
-        console.log(result2); */
     }catch(error){
         return error;
     }
 }
 module.exports = {
-    readData,
+    synchronizeData,
 }

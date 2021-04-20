@@ -1,16 +1,16 @@
 const express = require ('express');
 const managePdf = require('./managePdf');
 const response = require('../../network/response');
-const mangeSqlite = require('../manageSqlite/controller')
+const manageSqlite = require('../manageSqlite/controller')
 
 const router =express.Router();
 //Router
-router.get('/pdf',gPdf);
+router.get('/pdf',generatePdfVisitors);
 router.delete('/pdf',dPdf);
-router.get('/sqlite',readDataSqlite);
+router.get('/sqlite',synchronizeData);
 
-function gPdf (req,res){
-    managePdf.generatePdf(req,res)
+function generatePdfVisitors (req,res){
+    managePdf.generatePdfVisitors(req,res)
         .then(()=>{
             response.success(req,res,'Pdf created');
             })
@@ -29,8 +29,8 @@ function dPdf (req,res){
             response.error(req,res,'Do not pdf delete');
         })
 }
-function readDataSqlite(req,res){
-    mangeSqlite.readData()
+function synchronizeData(req,res){
+    manageSqlite.synchronizeData()
         .then((result)=>{
             response.success(req,res,result,200);
         })
