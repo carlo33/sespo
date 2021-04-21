@@ -9,7 +9,8 @@ function success(req,res,message,status){
 }
 function error(req,res,message,status){
     let codeStatus= status||500;
-    let codeMessage = message||'';
+    console.log(message);
+    let codeMessage = message||'Internal error';
     res.status(codeStatus).send({
         error:true,
         status:codeStatus,

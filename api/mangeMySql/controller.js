@@ -7,16 +7,36 @@ function writeMysql(table,data){
 function readMysql(table){
     return store.list(table);
 }
-
-function deletedMysql(table,clientProjectId,visitorId){
-    return store.deleted(table,clientProjectId,visitorId);
+function updateMysqlProject(table,data,clientProjectId){
+    return store.updateProject(table,data,clientProjectId);
 }
-function updateMysql(table,data,clientProjectId,visitorId){
-    return store.update(table,data,clientProjectId,visitorId);
+function updateMysqlTypeId(table,data,typeId,clientProjectId,visitorId){
+    return store.updateTypeId(table,data,typeId,clientProjectId,visitorId);
+}
+function updateMysqlPersonQuestion(table,newAnswer,clientProjectId,personId,daySelect,monthSelect,yearSelect,personalQuestionId){
+    return store.updatePersonQuestion(table,newAnswer,clientProjectId,personId,daySelect,monthSelect,yearSelect,personalQuestionId);
+}
+
+function deleteMysqlProject(table,clientProjectId){
+    return store.deleteProject(table,clientProjectId);
+}
+function deleteMysqlTypeId(table,typeId,clientProjectId,Id){
+    return store.deleteTypeId(table,typeId,clientProjectId,Id);
+}
+function deleteMysqlPersonQuestion(table,clientProjectId,personId,daySelect,monthSelect,yearSelect,personalQuestionId){
+    return store.deletePersonQuestion(table,clientProjectId,personId,daySelect,monthSelect,yearSelect,personalQuestionId);
+}
+function deletedTables(table){
+    return store.deletedTables(table);
 }
 module.exports={
     writeMysql,
     readMysql,
-    deletedMysql,
-    updateMysql,
+    updateMysqlProject,
+    updateMysqlTypeId,
+    updateMysqlPersonQuestion,
+    deleteMysqlProject,
+    deleteMysqlTypeId,
+    deleteMysqlPersonQuestion,
+    deletedTables,
 }

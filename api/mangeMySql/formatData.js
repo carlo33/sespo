@@ -12,6 +12,15 @@ function formatData(table,predata){
         case 'visitor_details':
             data = formatDataVisitorDetails(predata);
             break;
+        case 'questions':
+            data = formatDataQuestions(predata);
+            break;
+        case 'personal':
+            data = formatDataPersonal(predata);
+            break;
+        case 'person_question':
+            data = formatDataPersonQuestion(predata);
+            break;
         default:
             throw new Error('Data format do not find');
     }
@@ -66,6 +75,55 @@ function formatDataVisitorDetails(predata){
         temperature:predata.temperature,
         reason:predata.reason,
         observation:predata.observation,
+        is_deleted:0,
+        tenant_id:predata.tenant_id,
+        client_project_id:config.api.project,
+    }
+    return data;
+}
+////////////////////////////////////
+function formatDataQuestions(predata){
+    let data = {};
+    data={
+        question_id:predata.mobile_question_id,
+        description:predata.description,
+        is_editable:predata.is_editable,
+        type:predata.type,
+        is_deleted:0,
+        tenant_id:predata.tenant_id,
+        client_project_id:config.api.project,
+    }
+    return data;
+}
+////////////////////////////////////
+function formatDataPersonal(predata){
+    let data = {};
+    data={
+        personal_id:predata.mobile_personal_id,
+        dni:predata.dni,
+        first_name:predata.first_name,
+        last_name:predata.last_name,
+        age:predata.age,
+        phone:predata.phone,
+        address:predata.address,
+        is_deleted:0,
+        tenant_id:predata.tenant_id,
+        client_project_id:config.api.project,
+    }
+    return data;
+}
+////////////////////////////////////
+function formatDataPersonQuestion(predata){
+    let data = {};
+    let date=formatDate(predata.date);
+    data={
+        personal_question_id:predata.mobile_personal_question_id,
+        date:date,
+        answer:predata.answer,
+        moment:predata.moment,
+        type:predata.type,
+        personal_id:predata.personal_id,
+        question_id:predata.question_id,
         is_deleted:0,
         tenant_id:predata.tenant_id,
         client_project_id:config.api.project,
