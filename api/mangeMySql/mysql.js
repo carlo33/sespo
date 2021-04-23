@@ -132,7 +132,7 @@ function getHeaderPdfPersonal(tenantId,projectId,personalId){
 ////////////////////////////////////////////////////
 function getQuestions(tenantId,projectId){
     return new Promise((resolve,reject)=>{
-        connection.query(`SELECT description FROM questions WHERE tenant_id=${tenantId} AND client_project_id = ${projectId}`,(err,result)=>{
+        connection.query(`SELECT description, question_id FROM questions WHERE tenant_id=${tenantId} AND client_project_id = ${projectId}`,(err,result)=>{
             if(err) return reject(err);
             resolve(result);
         })

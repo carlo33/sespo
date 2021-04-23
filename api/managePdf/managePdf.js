@@ -6,7 +6,6 @@ const  styles = require('./pdf/styles');
 const contentPdf = require('./pdf/content');
 const controller = require('./controller');
 const response = require('../../network/response');
-const { Console } = require('console');
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 async function generatePdfVisitors(req,res){
     let nameProject ='';
@@ -16,29 +15,31 @@ async function generatePdfVisitors(req,res){
     await controller.getNameProject(req.body)
         .then((result)=>{
             let [{name:name}]=result;
-            console.log('nombre del proyecto',name);
             nameProject=name;
         })
         .catch((err)=>{
-            response.error(req,res,'no se encontraron datos')
+            console.log(err);
+            response.error(req,res,'Not find data')
         })
     ////Read table vistor_details
     await controller.listVisitorDetails(req.body)
     .then((result)=>{
         dataVisitorDetails=result;
-        console.log('result Visitor details:',dataVisitorDetails);
+        console.log('[Result Visitor details]:',dataVisitorDetails);
     })
     .catch((err)=>{
-        response.error(req,res,'no se encontraro datos');
+        console.log(err);
+        response.error(req,res,'Not find data');
     })    
     ////Read table visitors
     await controller.listVisitors(req.body)
         .then((result)=>{
             dataVisitors=result;
-            console.log('result Visitor :',dataVisitors);
+            console.log('[Result Visitor] :',dataVisitors);
         })
         .catch((err)=>{
-            response.error(req,res,'no se encontraron datos')
+            console.log(err);
+            response.error(req,res,'Not find data')
         })
     ////Join tables 
     function getIdOfVisitors(data){
@@ -51,7 +52,6 @@ async function generatePdfVisitors(req,res){
         return table.filter(item=>item[key]===visitorId);
     }
     /////new Format data for PDF visitors
-    console.log('comenzado proceso');
     let dataPdfRows = [];
     dataPdfRows.push(['Item','Apellidos y Nombres','DNI','Fecha','Hora','Temp.','Motivo de visita','Observación']);
     let arrayIdVisitors=getIdOfVisitors(dataVisitorDetails);
@@ -60,8 +60,7 @@ async function generatePdfVisitors(req,res){
         let [{date_format:date,time:time,temperature:temperature,reason:reason,observation:observation}] =searchIdVisitor(visitorId,dataVisitorDetails);
         dataPdfRows.push([`${visitorId}`,`${lastName} ${firstName}`,`${dni}`,`${date}`,`${time}`,`${temperature}`,`${reason}`,`${observation}`]);
     }
-    console.log('resultado final:');
-    console.log(dataPdfRows);
+    console.log('[Final Result]:',dataPdfRows);
     /////Generate pdf
     let content = contentPdf.structureContentPdfVisitors(nameProject,dataPdfRows)
     let docDefinition = {
@@ -94,30 +93,31 @@ async function generatePdfPersonal(req,res){
             numberDni=dni;
         })
         .catch((err)=>{
-            response.error(req,res,'no se encontraron datos')
+            console.log(err);
+            response.error(req,res,'Not find data')
         })
-        console.log("nombre proyecto:",nameProject);
-        console.log("Personal:",namePersonal);
-        console.log("dni:",numberDni);
     ////Read questions
     await controller.getQuestions(req.body)
         .then((results)=>{
-            console.log(results);
-            console.log(results.length);
-            //result=result;
             for (let result of results ){
-                let {description:description}=result;
-                questions.push(description);
-            }
+                let {description:description,question_id:questionId}=result;
+                questions.push(['P'+questionId,description]);
+            } 
         })
         .catch((err)=>{
-            response.error(req,res,'no se encontraron datos')
+            console.log(err);
+            response.error(req,res,'Not find data')
         })
-    console.log(questions);
+    console.log('[Result Questions]:',questions);
+    /////format questions
+    let formatQuestions=[];
+    for(let i=0;i<questions.length/2;i++){
+        formatQuestions[i]=questions[i].concat(questions[6+i]);
+    }
+    console.log('[Result Questions]:',formatQuestions);
     ////Read day of month for personal
     await controller.getDaysOfMonthForPeronal(req.body)
         .then((results)=>{
-            console.log(results);
             for(let result of results){
                 let {"DATE_FORMAT(A.date,'%d')":day,moment:moment}=result;
                 daysOfPersonal.push(day);
@@ -126,10 +126,10 @@ async function generatePdfPersonal(req,res){
         })
         .catch((err)=>{
             console.log(err);
-            response.error.apply(req,res,'no se encontraron datos')
+            response.error.apply(req,res,'Not find data')
         }
         )
-    console.log(daysOfPersonal,momentsOfDay);
+    console.log('[Result Days - Moment]',daysOfPersonal,momentsOfDay);
     ////Read answer
     if(daysOfPersonal.length!=momentsOfDay.length){
         throw new Error('Error respecto a los moment');
@@ -146,7 +146,6 @@ async function generatePdfPersonal(req,res){
         }
         await controller.getAnswerPersonal(req.body,day,momentsOfDay[indexMoment])
         .then((results)=>{
-            console.log(results);
             for(let result of results){
                 let {answer:answer,question_id:questionId}=result;
                 rowAnswerTemporal[questionId+1]=answer;
@@ -154,15 +153,14 @@ async function generatePdfPersonal(req,res){
         })
         .catch((err)=>{
             console.log(err);
-            response.error(req,res,'no se encontraron datos')
+            response.error(req,res,'Not find data')
         }) 
         indexMoment++;
-        console.log('resultadoFinal',rowAnswerTemporal)
         dataPersonAnswer.push(rowAnswerTemporal);
     }
-    console.log('data a enviar:',dataPersonAnswer);
+    console.log('[Result final]:',dataPersonAnswer);
 //////Generate pdf
-    let content = contentPdf.structureContentPdfPersonal(nameProject,namePersonal,numberDni,dataPersonAnswer)
+    let content = contentPdf.structureContentPdfPersonal(nameProject,namePersonal,numberDni,dataPersonAnswer,formatQuestions)
     let docDefinition = {
         content:content,
         pageOrientation:'landscape',

@@ -33,7 +33,7 @@ function generatePdfPersonal (req,res){
         })
 }
 function deletePdfVisitors (req,res){
-    managePdf.deletePdf()
+    managePdf.deletePdfVisitors()
         .then(()=>{
             response.success(req,res,'Pdf delete ');
         })
@@ -43,7 +43,7 @@ function deletePdfVisitors (req,res){
         })
 }
 function deletePdfPersonal (req,res){
-    managePdf.deletePdf()
+    managePdf.deletePdfPersonal()
         .then(()=>{
             response.success(req,res,'Pdf delete ');
         })
