@@ -17,7 +17,7 @@ function handleConnection(){
             console.log('Db connected');
         }
     })
-////////////////////////////////////////////////////
+//////
     connection.on('error',err=>{
         console.log('[db err]',err);
         if(err.code==='PROTOCOL_CONNECTION_LOST'){
@@ -28,7 +28,7 @@ function handleConnection(){
     })
 }
 handleConnection();
-////////////////////////////////////////////////////
+//////
 function insert(table,data){
     return new Promise((resolve,reject)=>{
         connection.query(`INSERT INTO ${table} SET ?`,data,(err,result)=>{
@@ -37,7 +37,7 @@ function insert(table,data){
         })
     })
 }
-////////////////////////////////////////////////////
+//////
 function list(table,tenantId,projectId,monthSelect,yearSelect){
     return new Promise((resolve,reject)=>{
         connection.query(`SELECT *, DATE_FORMAT(date,'%d/%m/%y') AS date_format FROM ${table} WHERE MONTH(date)=${monthSelect} AND YEAR(date)=${yearSelect} AND client_project_id=${projectId} AND tenant_id=${tenantId}`,(err,result)=>{
@@ -46,7 +46,7 @@ function list(table,tenantId,projectId,monthSelect,yearSelect){
         })
     })
 }
-////////////////////////////////////////////////////
+//////
 function listVisitors(tenantId,projectId,monthSelect,yearSelect){
     return new Promise((resolve,reject)=>{
         connection.query(`SELECT A.visitor_id, A.first_name, A.last_name, A.dni FROM visitor A LEFT JOIN visitor_details B ON A.visitor_id=B.visitor_id WHERE MONTH(B.date)=${monthSelect} AND YEAR(B.date)=${yearSelect} AND B.client_project_id =${projectId} AND B.tenant_id=${tenantId}`,(err,result)=>{
@@ -55,7 +55,7 @@ function listVisitors(tenantId,projectId,monthSelect,yearSelect){
         })
     })
 }
-////////////////////////////////////////////////////
+//////
 function updateProject(table, data, clientProjectId){
     return new Promise((resolve,reject)=>{
         connection.query(`UPDATE ${table} SET ? WHERE client_project_id=${clientProjectId}`,[data],(err,result)=>{
@@ -64,8 +64,7 @@ function updateProject(table, data, clientProjectId){
         })
     })
 }
-
-////////////////////////////////////////////////////
+//////
 function updateTypeId(table, data,typeId, clientProjectId,Id){
     return new Promise((resolve,reject)=>{
         connection.query(`UPDATE ${table} SET ? WHERE ${typeId}=${Id} AND client_project_id=${clientProjectId}`,[data],(err,result)=>{
@@ -74,7 +73,7 @@ function updateTypeId(table, data,typeId, clientProjectId,Id){
         })
     })
 }
-////////////////////////////////////////////////////
+//////
 function updatePersonQuestion(table,newAnswer,clientProjectId,personId,daySelect,monthSelect,yearSelect,personalQuestionId){
     return new Promise((resolve,reject)=>{
         connection.query(`UPDATE ${table} SET answer=${newAnswer} WHERE client_project_id=${clientProjectId} AND personal_id=${personId} AND DAY(date)=${daySelect} AND MONTH(date)=${monthSelect} AND YEAR(date)=${yearSelect} AND personal_question_id=${personalQuestionId}`,(err,result)=>{
@@ -83,8 +82,7 @@ function updatePersonQuestion(table,newAnswer,clientProjectId,personId,daySelect
         })
     })
 }
-
-////////////////////////////////////////////////////
+//////
 function deleteProject(table, clientProjectId){
     return new Promise((resolve,reject)=>{
         connection.query(`UPDATE ${table} SET is_deleted=1 WHERE client_project_id=${clientProjectId}`,(err,result)=>{
@@ -93,7 +91,7 @@ function deleteProject(table, clientProjectId){
         })
     })
 }
-////////////////////////////////////////////////////
+//////
 function deleteTypeId(table, typeId,clientProjectId,Id){
     return new Promise((resolve,reject)=>{
         connection.query(`UPDATE ${table} SET is_deleted=1 WHERE ${typeId}=${Id} AND client_project_id=${clientProjectId}`,(err,result)=>{
@@ -102,7 +100,7 @@ function deleteTypeId(table, typeId,clientProjectId,Id){
         })
     })
 }
-////////////////////////////////////////////////////
+//////
 function deletePersonQuestion(table,clientProjectId,personId,daySelect,monthSelect,yearSelect,personalQuestionId){
     return new Promise((resolve,reject)=>{
         connection.query(`UPDATE ${table} SET is_deleted=1 WHERE client_project_id=${clientProjectId} AND personal_id=${personId} AND DAY(date)=${daySelect} AND MONTH(date)=${monthSelect} AND YEAR(date)=${yearSelect} AND personal_question_id=${personalQuestionId}`,(err,result)=>{
@@ -111,7 +109,7 @@ function deletePersonQuestion(table,clientProjectId,personId,daySelect,monthSele
         })
     })
 }
-////////////////////////////////////////////////////
+//////
 function getNameProject(table,tenantId,projectId,){
     return new Promise((resolve,reject)=>{
         connection.query(`SELECT name FROM ${table} WHERE client_project_id='${projectId}' AND tenant_id='${tenantId}'`,(err,result)=>{
@@ -120,7 +118,7 @@ function getNameProject(table,tenantId,projectId,){
         })
     })
 }
-////////////////////////////////////////////////////
+//////
 function getHeaderPdfPersonal(tenantId,projectId,personalId){
     return new Promise((resolve,reject)=>{
         connection.query(`SELECT A.first_name, A.last_name, A.dni, B.name FROM personal A LEFT JOIN project B ON A.client_project_id=B.client_project_id WHERE A.personal_id=${personalId} AND A.client_project_id = ${projectId} AND A.tenant_id=${tenantId}`,(err,result)=>{
@@ -129,7 +127,7 @@ function getHeaderPdfPersonal(tenantId,projectId,personalId){
         })
     })
 }
-////////////////////////////////////////////////////
+//////
 function getQuestions(tenantId,projectId){
     return new Promise((resolve,reject)=>{
         connection.query(`SELECT description, question_id FROM questions WHERE tenant_id=${tenantId} AND client_project_id = ${projectId}`,(err,result)=>{
@@ -138,7 +136,7 @@ function getQuestions(tenantId,projectId){
         })
     })
 }
-////////////////////////////////////////////////////
+//////
 function  getDaysOfMonthForPeronal(tenantId,projectId,personalId,month,year){
     return new Promise((resolve,reject)=>{
         connection.query(`SELECT  DATE_FORMAT(A.date,'%d'), A.moment FROM person_question A LEFT JOIN personal B ON A.personal_id=B.personal_id WHERE B.tenant_id=${tenantId}  AND B.client_project_id = ${projectId} AND B.personal_id=${personalId} AND YEAR(A.date)=${year} AND MONTH(A.date)=${month} GROUP BY A.date, A.moment;`,(err,result)=>{
@@ -147,8 +145,7 @@ function  getDaysOfMonthForPeronal(tenantId,projectId,personalId,month,year){
         })
     })
 }
-////////////////////////////////////////////////////
-
+//////
 function getAnswerPersonal(tenantId,projectId,personalId,month,year,day,moment){
     return new Promise((resolve,reject)=>{
         connection.query(`SELECT A.answer, A.question_id FROM person_question A LEFT JOIN personal B ON A.personal_id=B.personal_id WHERE B.tenant_id=${tenantId}  AND B.client_project_id = ${projectId} AND B.personal_id=${personalId} AND YEAR(A.date)=${year} AND MONTH(A.date)=${month} AND DAY(A.date)=${day} AND moment=${moment};`,(err,result)=>{
@@ -157,7 +154,7 @@ function getAnswerPersonal(tenantId,projectId,personalId,month,year,day,moment){
         })
     })
 }
-////////////////////////////////////////////////////
+//////
 function deletedTables(table){
     return new Promise((resolve,reject)=>{
         connection.query(`DELETE  FROM ${table}`,(err,result)=>{
@@ -166,11 +163,38 @@ function deletedTables(table){
         })
     })
 }
-////////////////////////////////////////////////////
+//////
+function upsert(table,data){
+    return insert(table,data);
+}
+//////
+function update(table,data){
+    return new Promise((resolve,reject)=>{
+        connection.query(`UPDATE ${table} SET ? WHERE tenant_id=?`,[data,data.tenant_id],(err,result)=>{
+            if(err) return reject(err);
+            resolve(result);
+        })
+    })
+}
+//////
+function query(table,q){
+    return new Promise((resolve,reject)=>{
+        connection.query(`SELECT * FROM ${table} WHERE ${table}.?`,q,(err,result)=>{
+            if(err) return reject(err);
+            let output = {
+                id:result[0].tenant_id,
+                username:result[0].username,
+                password:result[0].password
+            }
+            resolve(output||null);
+        })
+    })
+}
 module.exports={
     insert,
     listVisitors,
     list,
+    update,
     updateProject,
     updateTypeId,
     updatePersonQuestion,
@@ -183,4 +207,6 @@ module.exports={
     getQuestions,
     getAnswerPersonal,
     getDaysOfMonthForPeronal,
+    upsert,
+    query,
 }
