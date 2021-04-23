@@ -175,7 +175,14 @@ async function generatePdfPersonal(req,res){
     return true; 
 }
 
-async function deletePdf(){
+async function deletePdfVisitors(){
+    fs.unlink('pdfs/Visitors.pdf',(err)=>{
+        if(err) return err;
+        console.log('File removed')
+        return true;
+    })
+}
+async function deletePdfPersonal(){
     fs.unlink('pdfs/Personal.pdf',(err)=>{
         if(err) return err;
         console.log('File removed')
@@ -186,5 +193,6 @@ async function deletePdf(){
 module.exports = {
     generatePdfVisitors,
     generatePdfPersonal,
-    deletePdf,
+    deletePdfVisitors,
+    deletePdfPersonal,
 }

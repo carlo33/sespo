@@ -8,8 +8,9 @@ const router =express.Router();
 router.get('/pdfVisitors',generatePdfVisitors);
 router.get('/pdfPersonal',generatePdfPersonal);
 router.get('/sqlite',synchronizeData);
-router.delete('/pdf',dPdf);
-router.delete('/information',deletedInformationMysql);
+router.delete('/deletePdfVisitors',deletePdfVisitors);
+router.delete('/deletePdfPersonal',deletePdfPersonal);
+router.delete('/mysql',deletedInformationMysql);
 
 function generatePdfVisitors (req,res){
     managePdf.generatePdfVisitors(req,res)
@@ -31,7 +32,17 @@ function generatePdfPersonal (req,res){
         response.error(req,res,'Pdf does not created');
         })
 }
-function dPdf (req,res){
+function deletePdfVisitors (req,res){
+    managePdf.deletePdf()
+        .then(()=>{
+            response.success(req,res,'Pdf delete ');
+        })
+        .catch((err)=>{
+            console.log(err);
+            response.error(req,res,'Do not pdf delete');
+        })
+}
+function deletePdfPersonal (req,res){
     managePdf.deletePdf()
         .then(()=>{
             response.success(req,res,'Pdf delete ');
