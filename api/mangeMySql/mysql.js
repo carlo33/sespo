@@ -38,18 +38,18 @@ function insert(table,data){
     })
 }
 ////////////////////////////////////////////////////
-function list(table, monthSelect,yearSelect){
+function list(table,tenantId,projectId,monthSelect,yearSelect){
     return new Promise((resolve,reject)=>{
-        connection.query(`SELECT *, DATE_FORMAT(date,'%d/%m/%y') AS date_format FROM ${table} WHERE MONTH(date)=${monthSelect} AND YEAR(date)=${yearSelect}`,(err,result)=>{
+        connection.query(`SELECT *, DATE_FORMAT(date,'%d/%m/%y') AS date_format FROM ${table} WHERE MONTH(date)=${monthSelect} AND YEAR(date)=${yearSelect} AND client_project_id=${projectId} AND tenant_id=${tenantId}`,(err,result)=>{
             if(err) return reject(err);
             resolve(result);
         })
     })
 }
 ////////////////////////////////////////////////////
-function listAll(table){
+function listVisitors(tenantId,projectId,monthSelect,yearSelect){
     return new Promise((resolve,reject)=>{
-        connection.query(`SELECT * FROM ${table}`,(err,result)=>{
+        connection.query(`SELECT A.visitor_id, A.first_name, A.last_name, A.dni FROM visitor A LEFT JOIN visitor_details B ON A.visitor_id=B.visitor_id WHERE MONTH(B.date)=${monthSelect} AND YEAR(B.date)=${yearSelect} AND B.client_project_id =${projectId} AND B.tenant_id=${tenantId}`,(err,result)=>{
             if(err) return reject(err);
             resolve(result);
         })
@@ -112,9 +112,46 @@ function deletePersonQuestion(table,clientProjectId,personId,daySelect,monthSele
     })
 }
 ////////////////////////////////////////////////////
-function getNameProject(table,clientProjectId){
+function getNameProject(table,tenantId,projectId,){
     return new Promise((resolve,reject)=>{
-        connection.query(`SELECT name FROM ${table} WHERE client_project_id='${clientProjectId}'`,(err,result)=>{
+        connection.query(`SELECT name FROM ${table} WHERE client_project_id='${projectId}' AND tenant_id='${tenantId}'`,(err,result)=>{
+            if(err) return reject(err);
+            resolve(result);
+        })
+    })
+}
+////////////////////////////////////////////////////
+function getHeaderPdfPersonal(tenantId,projectId,personalId){
+    return new Promise((resolve,reject)=>{
+        connection.query(`SELECT A.first_name, A.last_name, A.dni, B.name FROM personal A LEFT JOIN project B ON A.client_project_id=B.client_project_id WHERE A.personal_id=${personalId} AND A.client_project_id = ${projectId} AND A.tenant_id=${tenantId}`,(err,result)=>{
+            if(err) return reject(err);
+            resolve(result);
+        })
+    })
+}
+////////////////////////////////////////////////////
+function getQuestions(tenantId,projectId){
+    return new Promise((resolve,reject)=>{
+        connection.query(`SELECT description FROM questions WHERE tenant_id=${tenantId} AND client_project_id = ${projectId}`,(err,result)=>{
+            if(err) return reject(err);
+            resolve(result);
+        })
+    })
+}
+////////////////////////////////////////////////////
+function  getDaysOfMonthForPeronal(tenantId,projectId,personalId,month,year){
+    return new Promise((resolve,reject)=>{
+        connection.query(`SELECT  DATE_FORMAT(A.date,'%d'), A.moment FROM person_question A LEFT JOIN personal B ON A.personal_id=B.personal_id WHERE B.tenant_id=${tenantId}  AND B.client_project_id = ${projectId} AND B.personal_id=${personalId} AND YEAR(A.date)=${year} AND MONTH(A.date)=${month} GROUP BY A.date, A.moment;`,(err,result)=>{
+            if(err) return reject(err);
+            resolve(result);
+        })
+    })
+}
+////////////////////////////////////////////////////
+
+function getAnswerPersonal(tenantId,projectId,personalId,month,year,day,moment){
+    return new Promise((resolve,reject)=>{
+        connection.query(`SELECT A.answer, A.question_id FROM person_question A LEFT JOIN personal B ON A.personal_id=B.personal_id WHERE B.tenant_id=${tenantId}  AND B.client_project_id = ${projectId} AND B.personal_id=${personalId} AND YEAR(A.date)=${year} AND MONTH(A.date)=${month} AND DAY(A.date)=${day} AND moment=${moment};`,(err,result)=>{
             if(err) return reject(err);
             resolve(result);
         })
@@ -132,14 +169,18 @@ function deletedTables(table){
 ////////////////////////////////////////////////////
 module.exports={
     insert,
+    listVisitors,
     list,
-    listAll,
     updateProject,
     updateTypeId,
     updatePersonQuestion,
     deleteProject,
     deleteTypeId,
     deletePersonQuestion,
-    getNameProject,
     deletedTables,
+    getNameProject,
+    getHeaderPdfPersonal,
+    getQuestions,
+    getAnswerPersonal,
+    getDaysOfMonthForPeronal,
 }

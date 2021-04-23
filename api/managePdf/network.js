@@ -5,13 +5,24 @@ const manageSqlite = require('../manageSqlite/controller')
 
 const router =express.Router();
 //Router
-router.get('/pdf',generatePdfVisitors);
+router.get('/pdfVisitors',generatePdfVisitors);
+router.get('/pdfPersonal',generatePdfPersonal);
 router.get('/sqlite',synchronizeData);
 router.delete('/pdf',dPdf);
 router.delete('/information',deletedInformationMysql);
 
 function generatePdfVisitors (req,res){
     managePdf.generatePdfVisitors(req,res)
+        .then(()=>{
+            response.success(req,res,'Pdf created');
+            })
+        .catch((err)=>{
+        console.log(err);
+        response.error(req,res,'Pdf does not created');
+        })
+}
+function generatePdfPersonal (req,res){
+    managePdf.generatePdfPersonal(req,res)
         .then(()=>{
             response.success(req,res,'Pdf created');
             })

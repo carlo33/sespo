@@ -1,4 +1,4 @@
-function generateContent(nameProject,rows){
+function structureContentPdfVisitors(nameProject,rows){
     let content= [
         {
             text:"FORMATO DE REGISTRO DE VISITAS", 
@@ -23,6 +23,40 @@ function generateContent(nameProject,rows){
     ];
     return content;
 }
+function structureContentPdfPersonal(nameProject,namePersonal,dni,rows){
+    let content= [
+        {
+            text:"FORMATO DE CONTROL DIARIO DE PERSONAL", 
+            style:"header",
+        },
+        {
+            text:`Proyecto/Entidad: ${nameProject}`,
+            style:"subheader",
+        },
+        {
+            text:`Personal: ${namePersonal}`,
+            style:"subheader",
+        },
+        {
+            text:`DNI: ${dni}`,
+            style:"subheader",
+        },
+        {
+            style:'tableExample',
+            table:{
+                widths: [50,50,45,45,42,42,42,42,42,42,42,42,42,42,42],
+                body: rows
+            },
+            layout:{
+                fillColor:function(rowIndex){
+                    return (rowIndex==0) ? '#cccccc': null;
+                }
+            },
+        },
+    ];
+    return content;
+}
 module.exports = {
-    generateContent,
+    structureContentPdfVisitors,
+    structureContentPdfPersonal,
 }
