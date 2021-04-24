@@ -1,6 +1,6 @@
 const store = require('./sqlite');
-const controllerMysql = require('../mangeMySql/controller');
-const formatData = require('../mangeMySql/formatData'); 
+const controllerMysql = require('../MySql/controller');
+const formatData = require('../MySql/formatData'); 
 const config = require('../../config');
 
 const query = ['SELECT entity_id, payload, action FROM synchronizes WHERE is_synchronized = 0 AND entity_code="T001"',

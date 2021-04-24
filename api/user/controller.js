@@ -1,6 +1,6 @@
 const {nanoid}=require('nanoid');
 const auth = require('../auth/controller');
-const store = require('../mangeMySql/mysql')
+const store = require('../MySql/mysql')
 const TABLA = 'user';
 async function upsert(body){
     const user = {

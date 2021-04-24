@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const auth =require('../../auth');
 const TABLA= 'auth';
-const store = require('../mangeMySql/mysql');
+const store = require('../MySql/mysql');
 
 async function upsert(data){
     const authData={
