@@ -7,7 +7,7 @@ const router = express.Router();
 router.post('/',sendEmail);
 
 function sendEmail(req,res){
-    controller.sendEmail(req.body)
+    controller.sendEmail(req.body.email,req.body.pdf)
         .then(result=>{
             console.log('email sended');
             response.success(req,res,result,200);
