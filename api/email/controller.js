@@ -12,7 +12,7 @@ function sendEmail(email,selectPdf){
         from:'construinnovaperu@gmail.com',
         to:`${email}`,
         subject:'Envio de pdfs',
-        html:`<h1> SESPO</h1><h2> Seguimiento a la Salud del Personal Obrero</h2>
+        html:`<h1> SESPO</h1><h2> (Seguimiento a la Salud del Personal Obrero)</h2>
         <p>Buen dia, en el archivo adjunto se encuentra el pdf generado, Muchas gracias por usar nuestro servicio</p>`,
         attachments: [{
             path: `pdfs/${selectPdf}.pdf`,

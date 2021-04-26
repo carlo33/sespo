@@ -167,6 +167,7 @@ function deletedTables(table){
 function upsert(table,data){
     return insert(table,data);
 }
+
 //////
 function update(table,data){
     return new Promise((resolve,reject)=>{

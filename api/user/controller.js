@@ -1,6 +1,7 @@
 const {nanoid}=require('nanoid');
 const auth = require('../auth/controller');
-const store = require('../MySql/mysql')
+const store = require('../MySql/mysql');
+const token = require('../../auth/index');
 const TABLA = 'user';
 async function upsert(body){
     const user = {
@@ -51,7 +52,14 @@ async function update(body){
             password:body.password,
         })
     } 
-    return store.update(TABLA,user)
+    let data={
+        id:user.tenant_id,
+        username:user.username,
+        password:user.password
+    }
+    const response= await store.update(TABLA,user);
+    console.log(response);
+    return token.sign(data);
 }
 module.exports={
     upsert,

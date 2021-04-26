@@ -70,7 +70,7 @@ async function generatePdfVisitors(req,res){
     }
     const printer = new PdfPrinter(fonts);
     let pdfDoc = printer.createPdfKitDocument(docDefinition);
-    pdfDoc.pipe(fs.createWriteStream('pdfs/Visitors.pdf'));
+    pdfDoc.pipe(fs.createWriteStream('pdfs/visitors.pdf'));
     pdfDoc.end();
     return true;
 }
@@ -168,20 +168,20 @@ async function generatePdfPersonal(req,res){
     }
     const printer = new PdfPrinter(fonts);
     let pdfDoc = printer.createPdfKitDocument(docDefinition);
-    pdfDoc.pipe(fs.createWriteStream('pdfs/Personal.pdf'));
+    pdfDoc.pipe(fs.createWriteStream('pdfs/personal.pdf'));
     pdfDoc.end();
     return true; 
 }
 
 async function deletePdfVisitors(){
-    fs.unlink('pdfs/Visitors.pdf',(err)=>{
+    fs.unlink('pdfs/visitors.pdf',(err)=>{
         if(err) return err;
         console.log('File removed')
         return true;
     })
 }
 async function deletePdfPersonal(){
-    fs.unlink('pdfs/Personal.pdf',(err)=>{
+    fs.unlink('pdfs/personal.pdf',(err)=>{
         if(err) return err;
         console.log('File removed')
         return true;
