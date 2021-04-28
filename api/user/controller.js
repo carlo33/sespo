@@ -2,6 +2,7 @@ const {nanoid}=require('nanoid');
 const auth = require('../auth/controller');
 const store = require('../MySql/mysql');
 const token = require('../../auth/index');
+const controllerEmail = require('../email/controller'); 
 const TABLA = 'user';
 async function upsert(body){
     const user = {
@@ -13,21 +14,37 @@ async function upsert(body){
         licence_type:body.licenceType,
         entity:body.entity,
         is_deleted:0,
+        code_verification:0,
     }
     if(body.tenantId){
         user.tenant_id=body.tenantId;
     }else{
         user.tenant_id=nanoid();
     }
-    if(body.password||body.username){
+    //is user exits?
+    const isUserExits = await store.searchUser(TABLA,body.username,body.email);
+    if (isUserExits){
+        console.log('[user exits]');
+        return null;
+    }else{
+        console.log('[user regestered]');
+        if(body.password||body.username){
         await auth.upsert({
             tenant_id:user.tenant_id,
             username:user.username,
             password:body.password,
         })
-    } 
-    return store.upsert(TABLA,user)
+        } 
+        await store.upsert(TABLA,user);
+        let data = {
+            id:user.tenant_id,
+            username:user.username,
+            password:user.password
+        }
+        return  auth.getToken(data);
+    }
 }
+
 
 async function update(body){
     const user = {
@@ -39,6 +56,7 @@ async function update(body){
         licence_type:body.licenceType,
         entity:body.entity,
         is_deleted:0,
+        code_verification:0,
     }
     if(body.tenantId){
         user.tenant_id=body.tenantId;
@@ -61,7 +79,39 @@ async function update(body){
     console.log(response);
     return token.sign(data);
 }
+async function getCode(body){
+    let data = await store.query(TABLA,{email:body.email})
+    console.log(data);
+    if(data){
+        //generar codigo 6 digitos
+        let codeVerification = Math.floor(100000 + Math.random() * 900000);
+        await store.insertCodeVerification(TABLA,codeVerification,body.email);
+        return controllerEmail.sendCode(body.email,codeVerification);
+        //return 
+    } else{
+        return null;
+    }
+}
+async function setNewPassword(body){
+    let [{code_verification:code}] = await store.getCode(TABLA,body.email);
+    console.log(code);
+    if(body.code==code){
+        let data = await store.query(TABLA,{email:body.email})
+        let user ={
+            tenant_id:data.id,
+            username:data.username,
+            password:body.password
+        }
+        //data.password=body.password;
+        console.log(user);
+        return auth.update(user);
+    }else{
+        return null;
+    }
+}
 module.exports={
     upsert,
     update,
+    getCode,
+    setNewPassword,
 }

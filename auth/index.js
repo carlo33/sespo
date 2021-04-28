@@ -16,9 +16,9 @@ const check={
         const decoded = decodeHeader(req);
         console.log('[User decoded]',decoded);
         if(decoded.id!==ownerId){
-            throw new Error('You do not update this information');
+            throw new Error(`You can't update this information`);//-----------
         }
-        console.log('[Message]: YOU ARE THE USER');
+        console.log('[Message]: You are the  user');
     },
     logged:function(req){
         const decoded=decodeHeader(req);

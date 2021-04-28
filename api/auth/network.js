@@ -14,7 +14,7 @@ function loginSespo(req,res){
         })
         .catch((err)=>{
             console.log(err);
-            response.error(req,res,'User not authentificated',500);
+            response.error(req,res,'User or password incorect',401);
         })
 }
 

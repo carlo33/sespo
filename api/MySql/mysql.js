@@ -37,7 +37,7 @@ function insert(table,data){
         })
     })
 }
-//////
+//////-----------------------
 function list(table,tenantId,projectId,monthSelect,yearSelect){
     return new Promise((resolve,reject)=>{
         connection.query(`SELECT *, DATE_FORMAT(date,'%d/%m/%y') AS date_format FROM ${table} WHERE MONTH(date)=${monthSelect} AND YEAR(date)=${yearSelect} AND client_project_id=${projectId} AND tenant_id=${tenantId}`,(err,result)=>{
@@ -182,12 +182,51 @@ function query(table,q){
     return new Promise((resolve,reject)=>{
         connection.query(`SELECT * FROM ${table} WHERE ${table}.?`,q,(err,result)=>{
             if(err) return reject(err);
-            let output = {
-                id:result[0].tenant_id,
-                username:result[0].username,
-                password:result[0].password
+            if(result.length==0){
+                resolve(null);
+            }else{
+                let output = {
+                    id:result[0].tenant_id,
+                    username:result[0].username,
+                    password:result[0].password
+                }
+                resolve(output||null);
             }
-            resolve(output||null);
+        })
+    })
+}
+//////
+function searchUser(table,username,email){
+    return new Promise((resolve,reject)=>{
+        connection.query(`SELECT * FROM ${table} WHERE username=${username} OR email='${email}'`,(err,result)=>{
+            if(err) return reject(err);
+            if(result.length == 0 ){
+                resolve(null);
+            }else{
+                let output = {
+                    username:result[0].username,
+                    email:result[0].email,
+                }
+                resolve(output);
+            }
+        })
+    })
+}
+////
+function insertCodeVerification(table,code,email){
+    return new Promise((resolve,reject)=>{
+        connection.query(`UPDATE ${table} SET code_verification=${code} WHERE email='${email}'`,(err,result)=>{
+            if(err) return reject(err);
+            resolve(result);
+        })
+    })
+}
+////
+function getCode(table,email){
+    return new Promise((resolve,reject)=>{
+        connection.query(`SELECT code_verification FROM ${table} WHERE email='${email}'`,(err,result)=>{
+            if(err) return reject(err);
+            resolve(result);
         })
     })
 }
@@ -208,6 +247,9 @@ module.exports={
     getQuestions,
     getAnswerPersonal,
     getDaysOfMonthForPeronal,
+    getCode,
     upsert,
     query,
+    searchUser,
+    insertCodeVerification,
 }

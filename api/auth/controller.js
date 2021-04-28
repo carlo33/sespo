@@ -25,6 +25,7 @@ async function update(data){
     if(data.password){
         authData.password= await bcrypt.hash(data.password,5)
     }
+    console.log(authData);
     return store.update(TABLA,authData);
 }
 async function login(username,password){
@@ -40,7 +41,11 @@ async function login(username,password){
             }
         })
 }
+async function getToken(data){
+    return auth.sign(data);
+} 
 module.exports={
+    getToken,
     upsert,
     login,
     update,

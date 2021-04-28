@@ -8,12 +8,8 @@ module.exports=function checkAuth(action){
                 auth.check.own(req,ownerId);
                 next();
                 break;
-            case 'sync':
-                auth.check.logged(req);
-                next();
-                break;
             default:
-                nest();
+                next();
         }
     }
     return middelware;
