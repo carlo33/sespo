@@ -2,6 +2,8 @@ const bcrypt = require('bcrypt');
 const auth =require('../../auth');
 const TABLA= 'auth';
 const store = require('../MySql/mysql');
+const error = require('../../utils/error');
+const err = require('../../utils/error');
 
 async function upsert(data){
     const authData={
@@ -37,7 +39,8 @@ async function login(username,password){
             if(areEqual===true){
                 return auth.sign(data);
             }else{
-                throw new Error('Information user invalided');
+                throw error('User or password incorect',401)
+                //throw new Error('Information user invalided');
             }
         })
 }

@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const config = require('../config');
-
+const error = require('../utils/error'); 
 const secret = config.jwt.secret;
 ////
 function sign(data){
@@ -16,7 +16,8 @@ const check={
         const decoded = decodeHeader(req);
         console.log('[User decoded]',decoded);
         if(decoded.id!==ownerId){
-            throw new Error(`You can't update this information`);//-----------
+            throw error(`You can't update this information`,403);
+            //throw new Error(`You can't update this information`);//-----------
         }
         console.log('[Message]: You are the  user');
     },

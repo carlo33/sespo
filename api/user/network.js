@@ -8,7 +8,7 @@ router.post('/',registerUser);
 router.put('/',secure('update'),updateUser);
 router.get('/codeVerification',getCode);
 router.post('/newPassword',setNewPassword); 
-function registerUser(req,res){
+function registerUser(req,res,next){
     controller.upsert(req.body)
         .then (token=>{
             if(!token){
@@ -17,22 +17,16 @@ function registerUser(req,res){
                 response.success(req,res,token,200);
             }
         })
-        .catch((err)=>{
-            console.log(err);
-            response.error(req,res,'Internal server error',500)
-        })
+        .catch(next)
 }
-function updateUser(req,res){
+function updateUser(req,res,next){
     controller.update(req.body)
         .then (user=>{
             response.success(req,res,user,200);
         })
-        .catch((err)=>{
-            console.log(err);
-            response.error(req,res,'Internal server error',500)
-        })
+        .catch(next)
 }
-function getCode(req,res){
+function getCode(req,res,next){
     controller.getCode(req.body)
         .then (result=>{
             if(result){
@@ -41,12 +35,9 @@ function getCode(req,res){
                 response.success(req,res,'user does not exits',401);
             }
         })
-        .catch((err)=>{
-            console.log(err);
-            response.error(req,res,'Internal server error',500)
-        })
+        .catch(next)
 }
-function setNewPassword(req,res){
+function setNewPassword(req,res,next){
     controller.setNewPassword(req.body)
         .then (result=>{
             if(result){
@@ -55,9 +46,6 @@ function setNewPassword(req,res){
                 response.success(req,res,'code wrong',401);
             }
         })
-        .catch((err)=>{
-            console.log(err);
-            response.error(req,res,'Internal server error',500)
-        })
+        .catch(next)
 }
 module.exports = router;

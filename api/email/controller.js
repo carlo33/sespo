@@ -42,7 +42,7 @@ function sendCode(email,code){
             if (err) {
                 reject(err);
             }else{
-                resolve('email sended');
+                resolve('code sended');
             }
         })
     })

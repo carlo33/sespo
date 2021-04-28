@@ -6,16 +6,13 @@ const router=express.Router();
 
 router.post('/',loginSespo);
 
-function loginSespo(req,res){
+function loginSespo(req,res,next){
     controller.login(req.body.username,req.body.password)
         .then (token=>{
             console.log(token);
             response.success(req,res,token,200);
         })
-        .catch((err)=>{
-            console.log(err);
-            response.error(req,res,'User or password incorect',401);
-        })
+        .catch(next)
 }
 
 module.exports = router;
