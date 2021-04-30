@@ -1,5 +1,5 @@
 const store = require('./sqlite');
-const controllerMysql = require('../MySql/controller');
+const storeMysql = require('../MySql/mysql');
 const formatData = require('../MySql/formatData'); 
 const config = require('../../config');
 
@@ -24,28 +24,28 @@ async function synchronizeData(req,res){
                 switch (dataSqlite[i].action){
                     case 'CREATE':
                         console.log(nameTables[q],data);
-                        await controllerMysql.writeMysql(nameTables[q],data);
+                        await storeMysql.insert(nameTables[q],data);
                         break;
                     case 'UPDATE':
                         switch (nameTables[q]){
                             case 'project':
-                                await controllerMysql.updateMysqlProject(nameTables[q],data,clientProjectId);
+                                await storeMysql.updateProject(nameTables[q],data,clientProjectId);
                                 break;
                             case 'visitor':
                             case 'visitor_details':
                                 typeId = 'visitor_id';
                                 let visitorId= data.visitor_id;
-                                await controllerMysql.updateMysqlTypeId(nameTables[q],data,typeId,clientProjectId,visitorId);
+                                await storeMysql.updateTypeId(nameTables[q],data,typeId,clientProjectId,visitorId);
                                 break;
                             case 'questions':
                                 typeId = 'question_id';
                                 let questionId = data.question_id;
-                                await controllerMysql.updateMysqlTypeId(nameTables[q],data,typeId,clientProjectId,questionId);
+                                await storeMysql.updateTypeId(nameTables[q],data,typeId,clientProjectId,questionId);
                                 break;
                             case 'personal':
                                 typeId = 'personal_id';
                                 let personalId = data.personal_id;
-                                await controllerMysql.updateMysqlTypeId(nameTables[q],data,typeId,clientProjectId,personalId);
+                                await storeMysql.updateTypeId(nameTables[q],data,typeId,clientProjectId,personalId);
                                 break;
                             case 'person_question':
                                 console.log(nameTables[q],data);
@@ -58,7 +58,7 @@ async function synchronizeData(req,res){
                                 let personalQuestionId = data.personal_question_id;
                                 let newAnswer = data.answer;
                                 console.log('llegue hasta aqui');
-                                await controllerMysql.updateMysqlPersonQuestion(nameTables[q],newAnswer,clientProjectId,personId,daySelect,monthSelect,yearSelect,personalQuestionId);
+                                await storeMysql.updatePersonQuestion(nameTables[q],newAnswer,clientProjectId,personId,daySelect,monthSelect,yearSelect,personalQuestionId);
                                 break;
                             default:
                                 throw new Error ('Error to update data');
@@ -67,23 +67,23 @@ async function synchronizeData(req,res){
                     case 'DELETE':
                         switch (nameTables[q]){
                             case 'project':
-                                await controllerMysql.deleteMysqlProject(nameTables[q],data,clientProjectId);
+                                await storeMysql.deleteProject(nameTables[q],data,clientProjectId);
                                 break;
                             case 'visitor':
                             case 'visitor_details':
                                 typeId = 'visitor_id';
                                 let visitorId= data.visitor_id;
-                                await controllerMysql.deleteMysqlTypeId(nameTables[q],typeId,clientProjectId,visitorId);
+                                await storeMysql.deleteTypeId(nameTables[q],typeId,clientProjectId,visitorId);
                                 break;
                             case 'questions':
                                 typeId = 'question_id';
                                 let questionId= data.question_id;
-                                await controllerMysql.deleteMysqlTypeId(nameTables[q],typeId,clientProjectId,questionId);
+                                await storeMysql.deleteTypeId(nameTables[q],typeId,clientProjectId,questionId);
                                 break;
                             case 'personal':
                                 typeId = 'personal_id';
                                 let personalId = data.personal_id;
-                                await controllerMysql.deleteMysqlTypeId(nameTables[q],data,typeId,clientProjectId,personalId);
+                                await storeMysql.deleteTypeId(nameTables[q],data,typeId,clientProjectId,personalId);
                                 break;
                             default:
                                 throw new Error ('Error to delete data');
@@ -97,7 +97,7 @@ async function synchronizeData(req,res){
                             let daySelect = parseInt(newDate[2]);
                             let personId=data.personal_id;
                             let personalQuestionId = data.personal_question_id;
-                            await controllerMysql.deleteMysqlPersonQuestion(nameTables[q],clientProjectId,personId,daySelect,monthSelect,yearSelect,personalQuestionId); */
+                            await storeMysql.deleteMysqlPersonQuestion(nameTables[q],clientProjectId,personId,daySelect,monthSelect,yearSelect,personalQuestionId); */
                             
                             break;
                     default: 
@@ -111,12 +111,12 @@ async function synchronizeData(req,res){
     }
 }
 async function deletedInformationMysql(req,res){
-    await controllerMysql.deletedTables(nameTables[5]);
-    await controllerMysql.deletedTables(nameTables[4]);
-    await controllerMysql.deletedTables(nameTables[3]);
-    await controllerMysql.deletedTables(nameTables[2]);
-    await controllerMysql.deletedTables(nameTables[1]);
-    await controllerMysql.deletedTables(nameTables[0]);
+    await storeMysql.deletedTables(nameTables[5]);
+    await storeMysql.deletedTables(nameTables[4]);
+    await storeMysql.deletedTables(nameTables[3]);
+    await storeMysql.deletedTables(nameTables[2]);
+    await storeMysql.deletedTables(nameTables[1]);
+    await storeMysql.deletedTables(nameTables[0]);
     return true
 }
 module.exports = {

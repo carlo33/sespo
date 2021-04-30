@@ -1,5 +1,5 @@
 const express = require('express');
-const pdf = require('./managePdf/network');
+const pdf = require('./pdf/network');
 const auth = require('./auth/network');
 const user = require('./user/network');
 const email = require('./email/network');

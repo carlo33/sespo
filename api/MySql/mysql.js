@@ -28,6 +28,9 @@ function handleConnection(){
     })
 }
 handleConnection();
+/* function closeConnection(){
+    connection.end();
+} */
 //////
 function insert(table,data){
     return new Promise((resolve,reject)=>{
@@ -252,4 +255,5 @@ module.exports={
     query,
     searchUser,
     insertCodeVerification,
+    handleConnection,
 }

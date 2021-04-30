@@ -1,9 +1,9 @@
 const PdfPrinter = require('pdfmake');
 const fs = require('fs');
 
-let fonts = require('./pdf/fonts');
-const  styles = require('./pdf/styles');
-const contentPdf = require('./pdf/content');
+let fonts = require('./featuresPdf/fonts');
+const  styles = require('./featuresPdf/styles');
+const contentPdf = require('./featuresPdf/content');
 const response = require('../../network/response');
 const store = require('../MySql/mysql');
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -20,9 +20,6 @@ const check={
             //throw new Error(`You can't update this information`);//-----------
         }
         console.log('[Message]: You are the  user');
-    },
-    logged:function(req){
-        const decoded=decodeHeader(req);
     }
 }
 ////

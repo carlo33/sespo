@@ -3,7 +3,6 @@ const auth =require('../../auth');
 const TABLA= 'auth';
 const store = require('../MySql/mysql');
 const error = require('../../utils/error');
-const err = require('../../utils/error');
 
 async function upsert(data){
     const authData={

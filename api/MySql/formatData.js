@@ -1,4 +1,3 @@
-const {nanoid} = require('nanoid');
 const config = require('../../config');
 function formatData(table,predata){
     let data ={};
@@ -28,7 +27,6 @@ function formatData(table,predata){
 }
 function formatDataProyect(predata){
     let data = {};
-    //let client_project_id=nanoid();
     let client_project_id=config.api.project;
     let created_at=formatDate(predata.created_at);
     data={

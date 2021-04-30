@@ -1,19 +1,21 @@
 const express = require ('express');
-const managePdf = require('./controller');
+const controllerPdf = require('./controller');
 const response = require('../../network/response');
-const manageSqlite = require('../sqlite/controller')
+const controllerSqlite = require('../sqlite/controller')
+const secure = require('./secure');
 
 const router =express.Router();
 //Router
+router.get('/sqlite',secure('synchronize'),synchronizeData);
+/////
 router.get('/pdfVisitors',generatePdfVisitors);
 router.get('/pdfPersonal',generatePdfPersonal);
-router.get('/sqlite',synchronizeData);
 router.delete('/deletePdfVisitors',deletePdfVisitors);
 router.delete('/deletePdfPersonal',deletePdfPersonal);
 router.delete('/mysql',deletedInformationMysql);
 
 function generatePdfVisitors (req,res){
-    managePdf.generatePdfVisitors(req,res)
+    controllerPdf.generatePdfVisitors(req,res)
         .then(()=>{
             response.success(req,res,'Pdf created',200);
             })
@@ -23,7 +25,7 @@ function generatePdfVisitors (req,res){
         })
 }
 function generatePdfPersonal (req,res){
-    managePdf.generatePdfPersonal(req,res)
+    controllerPdf.generatePdfPersonal(req,res)
         .then(()=>{
             response.success(req,res,'Pdf created',200);
             })
@@ -33,7 +35,7 @@ function generatePdfPersonal (req,res){
         })
 }
 function deletePdfVisitors (req,res){
-    managePdf.deletePdfVisitors()
+    controllerPdf.deletePdfVisitors()
         .then(()=>{
             response.success(req,res,'Pdf delete ',200);
         })
@@ -43,7 +45,7 @@ function deletePdfVisitors (req,res){
         })
 }
 function deletePdfPersonal (req,res){
-    managePdf.deletePdfPersonal()
+    controllerPdf.deletePdfPersonal()
         .then(()=>{
             response.success(req,res,'Pdf delete ',200);
         })
@@ -53,8 +55,8 @@ function deletePdfPersonal (req,res){
         })
 }
 function synchronizeData(req,res){
-    manageSqlite.synchronizeData()
-        .then((result)=>{
+    controllerSqlite.synchronizeData()
+        .then(()=>{
             response.success(req,res,'Synchronized',200);
         })
         .catch((err)=>{
@@ -63,7 +65,7 @@ function synchronizeData(req,res){
         })
 }
 function deletedInformationMysql(req,res){
-    manageSqlite.deletedInformationMysql()
+    controllerSqlite.deletedInformationMysql()
         .then((result)=>{
             response.success(req,res,'Ok information deleted',200);
         })

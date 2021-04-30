@@ -4,6 +4,7 @@ const store = require('../MySql/mysql');
 const token = require('../../auth/index');
 const controllerEmail = require('../email/controller'); 
 const TABLA = 'user';
+////
 async function upsert(body){
     const user = {
         user_id:body.userId,
@@ -44,8 +45,7 @@ async function upsert(body){
         return  auth.getToken(data);
     }
 }
-
-
+/////
 async function update(body){
     const user = {
         user_id:body.userId,
@@ -73,12 +73,14 @@ async function update(body){
     let data={
         id:user.tenant_id,
         username:user.username,
-        password:user.password
+        password:body.password
     }
     const response= await store.update(TABLA,user);
     console.log(response);
+    console.log(data);
     return token.sign(data);
 }
+////
 async function getCode(body){
     let data = await store.query(TABLA,{email:body.email})
     console.log(data);
