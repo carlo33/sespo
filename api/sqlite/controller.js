@@ -11,7 +11,8 @@ const query = ['SELECT entity_id, payload, action FROM synchronizes WHERE is_syn
 'SELECT entity_id, payload, action FROM synchronizes WHERE is_synchronized = 0 AND entity_code="T003"'];
 const nameTables = ['project','visitor','visitor_details','questions','personal','person_question'];
 async function synchronizeData(req,res){
-    try{
+    console.log('voy a sincronizar')
+    /* try{
         let clientProjectId=config.api.project;//-----
         let typeId='';
         for (let q=0;q<query.length;q++){
@@ -97,7 +98,7 @@ async function synchronizeData(req,res){
                             let daySelect = parseInt(newDate[2]);
                             let personId=data.personal_id;
                             let personalQuestionId = data.personal_question_id;
-                            await storeMysql.deleteMysqlPersonQuestion(nameTables[q],clientProjectId,personId,daySelect,monthSelect,yearSelect,personalQuestionId); */
+                            await storeMysql.deleteMysqlPersonQuestion(nameTables[q],clientProjectId,personId,daySelect,monthSelect,yearSelect,personalQuestionId); 
                             
                             break;
                     default: 
@@ -108,7 +109,7 @@ async function synchronizeData(req,res){
         return true;//---
     }catch(error){
         return error;
-    }
+    } */
 }
 async function deletedInformationMysql(req,res){
     await storeMysql.deletedTables(nameTables[5]);

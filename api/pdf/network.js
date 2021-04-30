@@ -3,10 +3,10 @@ const controllerPdf = require('./controller');
 const response = require('../../network/response');
 const controllerSqlite = require('../sqlite/controller')
 const secure = require('./secure');
-
+const copySqlite = require('./copySqlite');
 const router =express.Router();
 //Router
-router.get('/sqlite',secure('synchronize'),synchronizeData);
+router.get('/sqlite',[secure('synchronize'), copySqlite() ],synchronizeData);
 /////
 router.get('/pdfVisitors',generatePdfVisitors);
 router.get('/pdfPersonal',generatePdfPersonal);
