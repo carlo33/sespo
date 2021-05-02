@@ -6,8 +6,8 @@ const router=express.Router();
 
 router.post('/',registerUser);
 router.put('/',secure('update'),updateUser);
-router.get('/codeVerification',getCode);
 router.post('/newPassword',setNewPassword); 
+router.get('/generateCode',getCode);
 function registerUser(req,res,next){
     controller.upsert(req.body)
         .then (token=>{

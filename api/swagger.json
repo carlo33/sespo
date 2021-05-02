@@ -1,0 +1,372 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "description": "Seguimiento a la salud del personal obrero",
+      "version": "1.0.0",
+      "title": "SESPO"
+    },
+    "host": "localhost:3000",
+    "basePath": "/api/sespo",
+    "tags": [
+      {
+        "name": "user",
+        "description": "Operaciones sobre el usuario"
+      }
+    ],
+    "schemes": [
+      "http"
+    ],
+    "paths": {
+      "/user": {
+        "post": {
+          "tags": [
+            "user"
+          ],
+          "summary": "Registrar un nuevo suario",
+          "description": "Registar un nuevo usuario",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "Registar usuario",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "error:false , status:200, body: 'tokenId'",
+              "schema": {
+                "$ref": "#/definitions/ApiResponse"
+              }
+            }
+          }
+        },
+        "put": {
+          "tags": [
+            "user"
+          ],
+          "summary": "Actualizar informacion de usuario",
+          "description": "Actualizar informacion de usuario",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "Actualizar informacion de usuario",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "error:false , status:200, body: 'tokenId'",
+              "schema": {
+                "$ref": "#/definitions/ApiResponse"
+              }
+            }
+          }
+        }
+      },
+      "/user/newPassword": {
+        "post": {
+          "tags": [
+            "user"
+          ],
+          "summary": "Generar nueva contraseña",
+          "description": "Generar nueva contraseña",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "Generar nueva contraseña",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/UserPass"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "error:false , status:200, body: 'password update'",
+              "schema": {
+                "$ref": "#/definitions/ApiResponse"
+              }
+            }
+          }
+        }
+      },
+      "/user/generateCode": {
+        "get": {
+          "tags": [
+            "user"
+          ],
+          "summary": "Generar un codigo de verificación",
+          "description": "Generar un codigo de verificación para poder modificar su contraseña, el codigo es enviado a su correo ",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "Generar un codigo de verificación",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/UserCode"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "error:false , status:200, body: 'code sended'",
+              "schema": {
+                "$ref": "#/definitions/ApiResponse"
+              }
+            }
+          }
+        }
+      },
+      "/synchronize": {
+        "post": {
+          "tags": [
+            "pdf"
+          ],
+          "summary": "Sincronizacion de sqlite con Mysql",
+          "description": "Sincronizacion de sqlite con Mysql",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "Se enviar la base de datos sqlite y en authorization se envia el token",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/Sqlite"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "error:false , status:200, body: 'synchronized'",
+              "schema": {
+                "$ref": "#/definitions/ApiResponse"
+              }
+            }
+          }
+        }
+      },
+      "/pdfVisitors": {
+        "get": {
+          "tags": [
+            "pdf"
+          ],
+          "summary": "Generar pdf Formato de visitas",
+          "description": "Generar pdf Formato de visitas que sera enviado a su correo",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "Se solicita la generacion del foramto visitas",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/pdfVisitors"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "error:false , status:200, body: 'pdf created'",
+              "schema": {
+                "$ref": "#/definitions/ApiResponse"
+              }
+            }
+          }
+        }
+      },
+      "/pdfPersonal": {
+        "get": {
+          "tags": [
+            "pdf"
+          ],
+          "summary": "Generar pdf Formato de cada personal",
+          "description": "Generar pdf Formato de control diario de cada personal que sera enviado a su correo",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "Se solicita la generacion del foramto de control diario",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/pdfPersonal"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "error:false , status:200, body: 'pdf created'",
+              "schema": {
+                "$ref": "#/definitions/ApiResponse"
+              }
+            }
+          }
+        }
+      }
+    },
+    "securityDefinitions": {
+      "petstore_auth": {
+        "type": "oauth2",
+        "authorizationUrl": "http://petstore.swagger.io/oauth/dialog",
+        "flow": "implicit",
+        "scopes": {
+          "write:pets": "modify pets in your account",
+          "read:pets": "read your pets"
+        }
+      },
+      "api_key": {
+        "type": "apiKey",
+        "name": "api_key",
+        "in": "header"
+      }
+    },
+    "definitions": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "licenceKey": {
+            "type": "string"
+          },
+          "licenceType": {
+            "type": "string"
+          },
+          "emtity": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "UserPass": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "UserCode": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          }
+        }
+      },
+      "Sqlite": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "object"
+          }
+        }
+      },
+      "pdfVisitors": {
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "string"
+          },
+          "year": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          }
+        }
+      },
+      "pdfPersonal": {
+        "type": "object",
+        "properties": {
+          "personalId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "month": {
+            "type": "string"
+          },
+          "year": {
+            "type": "string"
+          }
+        }
+      },
+      "ApiResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "boolean",
+            "format": "int1"
+          },
+          "status": {
+            "type": "integer"
+          },
+          "body": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "externalDocs": {
+      "description": "Find out more about Swagger",
+      "url": "http://swagger.io"
+    }
+  }
