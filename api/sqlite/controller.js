@@ -1,115 +1,157 @@
 const store = require('./sqlite');
 const storeMysql = require('../MySql/mysql');
 const formatData = require('../MySql/formatData'); 
-const config = require('../../config');
+const error = require('../../utils/error');
 
 const query = ['SELECT entity_id, payload, action FROM synchronizes WHERE is_synchronized = 0 AND entity_code="T001"',
-'SELECT entity_id, payload, action FROM synchronizes WHERE is_synchronized = 0 AND entity_code="T005"',
-'SELECT entity_id, payload, action FROM synchronizes WHERE is_synchronized = 0 AND entity_code="T008"',
 'SELECT entity_id, payload, action FROM synchronizes WHERE is_synchronized = 0 AND entity_code="T006"',
 'SELECT entity_id, payload, action FROM synchronizes WHERE is_synchronized = 0 AND entity_code="T004"',
+'SELECT entity_id, payload, action FROM synchronizes WHERE is_synchronized = 0 AND entity_code="T005"',
+'SELECT entity_id, payload, action FROM synchronizes WHERE is_synchronized = 0 AND entity_code="T008"',
 'SELECT entity_id, payload, action FROM synchronizes WHERE is_synchronized = 0 AND entity_code="T003"'];
-const nameTables = ['project','visitor','visitor_details','questions','personal','person_question'];
+const nameTables = ['project','questions','personal','visitor','visitor_details','person_question'];
 async function synchronizeData(req,res){
-    console.log('voy a sincronizar')
-    /* try{
-        let clientProjectId=config.api.project;//-----
+    let db;
+    await store.connecteSqlite()
+        .then((result)=>{
+            db=result;
+        })
+        .catch((err)=>{
+            return err;
+        })
+    try{
+        let projectId='';
         let typeId='';
+        let visitorId='';
+        let projectIdVisitors='';
+        let personalId='';
+        let questionId='';
         for (let q=0;q<query.length;q++){
             let data={};
-            let dataSqlite= await store.readTable(query[q]);
-            console.log(dataSqlite);
+            let dataSqlite= await store.readTable(query[q],db);
             for(let i=0;i<dataSqlite.length;i++){
                 let predata = JSON.parse(dataSqlite[i].payload);
+                let tenantId = predata.tenant_id;
+                console.log('[tenantID]:',tenantId);
                 data =  formatData.formatData(nameTables[q],predata);
                 switch (dataSqlite[i].action){
                     case 'CREATE':
-                        console.log(nameTables[q],data);
                         await storeMysql.insert(nameTables[q],data);
                         break;
                     case 'UPDATE':
                         switch (nameTables[q]){
                             case 'project':
-                                await storeMysql.updateProject(nameTables[q],data,clientProjectId);
+                                await storeMysql.updateProject(nameTables[q],data,tenantId);
                                 break;
                             case 'visitor':
+                                visitorId= data.visitor_id;
+                                projectIdVisitors=data.client_project_id;
+                                await storeMysql.updateVisitors(data,tenantId,projectIdVisitors,visitorId);
+                                break;
                             case 'visitor_details':
-                                typeId = 'visitor_id';
-                                let visitorId= data.visitor_id;
-                                await storeMysql.updateTypeId(nameTables[q],data,typeId,clientProjectId,visitorId);
+                                visitorId= data.visitor_id;
+                                await storeMysql.updateVisitorDetails(data,tenantId,projectIdVisitors,visitorId);
                                 break;
                             case 'questions':
                                 typeId = 'question_id';
-                                let questionId = data.question_id;
-                                await storeMysql.updateTypeId(nameTables[q],data,typeId,clientProjectId,questionId);
+                                questionId = data.question_id;
+                                projectId=data.client_project_id;
+                                await storeMysql.updateTypeId(nameTables[q],data,typeId,questionId,tenantId,projectId);
                                 break;
                             case 'personal':
                                 typeId = 'personal_id';
-                                let personalId = data.personal_id;
-                                await storeMysql.updateTypeId(nameTables[q],data,typeId,clientProjectId,personalId);
+                                personalId = data.personal_id;
+                                projectId=data.client_project_id;
+                                await storeMysql.updateTypeId(nameTables[q],data,typeId,personalId,tenantId,projectId);
                                 break;
                             case 'person_question':
-                                console.log(nameTables[q],data);
                                 let date =data.date;
                                 let newDate =date.split('-',3);
                                 let yearSelect=parseInt(newDate[0]);
                                 let monthSelect = parseInt(newDate[1]);
                                 let daySelect = parseInt(newDate[2]);
-                                let personId=data.personal_id;
+                                personalId=data.personal_id;
+                                projectId=data.client_project_id;
                                 let personalQuestionId = data.personal_question_id;
                                 let newAnswer = data.answer;
-                                console.log('llegue hasta aqui');
-                                await storeMysql.updatePersonQuestion(nameTables[q],newAnswer,clientProjectId,personId,daySelect,monthSelect,yearSelect,personalQuestionId);
+                                await storeMysql.updatePersonQuestion(tenantId,projectId,personalId,daySelect,monthSelect,yearSelect,personalQuestionId,newAnswer);
                                 break;
                             default:
-                                throw new Error ('Error to update data');
+                                throw error('error update data',500);
                         }
                         break;
                     case 'DELETE':
                         switch (nameTables[q]){
                             case 'project':
-                                await storeMysql.deleteProject(nameTables[q],data,clientProjectId);
+                                projectId=data.client_project_id;
+                                await storeMysql.deleteProject(tenantId,projectId);
                                 break;
                             case 'visitor':
+                                projectIdVisitors=data.client_project_id;
+                                visitorId=data.visitor_id;
+                                console.log(tenantId,projectIdVisitors,visitorId);
+                                await storeMysql.deleteVisitors(tenantId,projectIdVisitors,visitorId);
+                                break;
                             case 'visitor_details':
-                                typeId = 'visitor_id';
-                                let visitorId= data.visitor_id;
-                                await storeMysql.deleteTypeId(nameTables[q],typeId,clientProjectId,visitorId);
+                                visitorId= data.visitor_id;
+                                await storeMysql.deleteVisitorDetails(tenantId,projectIdVisitors,visitorId);
                                 break;
                             case 'questions':
                                 typeId = 'question_id';
-                                let questionId= data.question_id;
-                                await storeMysql.deleteTypeId(nameTables[q],typeId,clientProjectId,questionId);
+                                projectId=data.client_project_id;
+                                questionId= data.question_id;
+                                await storeMysql.deleteTypeId(nameTables[q],tenantId,projectId,typeId,questionId);
                                 break;
                             case 'personal':
                                 typeId = 'personal_id';
-                                let personalId = data.personal_id;
-                                await storeMysql.deleteTypeId(nameTables[q],data,typeId,clientProjectId,personalId);
+                                projectId=data.client_project_id;
+                                personalId = data.personal_id;
+                                await storeMysql.deleteTypeId(nameTables[q],tenantId,projectId,typeId,personalId);
+                                break;
+                            case 'person_question':
+                                let date =data.date;
+                                let newDate =date.split('-',3);
+                                let yearSelect=parseInt(newDate[0]);
+                                let monthSelect = parseInt(newDate[1]);
+                                let daySelect = parseInt(newDate[2]);
+                                personalId=data.personal_id;
+                                projectId=data.client_project_id;
+                                let personalQuestionId = data.personal_question_id;
+                                await storeMysql.deletePersonQuestion(tenantId,projectId,personalId,daySelect,monthSelect,yearSelect,personalQuestionId);
                                 break;
                             default:
-                                throw new Error ('Error to delete data');
+                                throw error('internal server error',500);
                         }
                         break;
-                    case 'person_question':
-                            /* let date =data.date;
-                            let newDate =date.split('-',3);
-                            let yearSelect=parseInt(newDate[0]);
-                            let monthSelect = parseInt(newDate[1]);
-                            let daySelect = parseInt(newDate[2]);
-                            let personId=data.personal_id;
-                            let personalQuestionId = data.personal_question_id;
-                            await storeMysql.deleteMysqlPersonQuestion(nameTables[q],clientProjectId,personId,daySelect,monthSelect,yearSelect,personalQuestionId); 
-                            
-                            break;
                     default: 
-                        throw new Error ('Action invalided');
+                        throw error('internal server error',500);
                     }
-                }
+            }
         }
-        return true;//---
-    }catch(error){
-        return error;
-    } */
+        return true
+    }catch(err){
+        throw error(err,500);
+    } 
+}
+async function readTenantId(){
+    const q = 'SELECT payload FROM synchronizes WHERE  entity_code="T001"';
+    let isConnected = false;
+    let db;
+    await store.connecteSqlite()
+        .then((result)=>{
+            db=result;
+            isConnected=true;
+        })
+        .catch((err)=>{
+            return err;
+        })
+    if(isConnected == true){
+        let response = await store.readTable(q,db);
+        let payload =JSON.parse(response[0].payload); 
+        return payload;
+    }else{
+        return new Error('no connected');
+}   
 }
 async function deletedInformationMysql(req,res){
     await storeMysql.deletedTables(nameTables[5]);
@@ -123,4 +165,5 @@ async function deletedInformationMysql(req,res){
 module.exports = {
     synchronizeData,
     deletedInformationMysql,
+    readTenantId,
 }

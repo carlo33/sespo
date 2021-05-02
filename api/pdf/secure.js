@@ -1,12 +1,20 @@
 const auth = require('../../auth');
+const controllerSqlite = require('../sqlite/controller');
 module.exports=function checkAuth(action){
-    function middelware(req,res,next){
+    async function middelware(req,res,next){
         switch(action){
             case 'synchronize':
-                const ownerId=req.body.tenantId;
-                console.log('[tenantId]:',ownerId);
-                auth.check.own(req,ownerId);
-                next();
+                await controllerSqlite.readTenantId()
+                    .then((payload)=>{
+                        let ownerId=payload.tenant_id;
+                        console.log('[secure - tenant_id - BD]', ownerId );
+                        auth.check.own(req,ownerId);
+                        next();
+                    })
+                    .catch((err)=>{
+                        console.log(err);
+                        return err;
+                    })
                 break;
             default:
                 next();

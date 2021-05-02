@@ -17,7 +17,6 @@ const check={
         console.log('[User decoded]',decoded);
         if(decoded.id!==ownerId){
             throw error(`You can't update this information`,403);
-            //throw new Error(`You can't update this information`);//-----------
         }
         console.log('[Message]: You are the  user');
     }

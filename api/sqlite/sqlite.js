@@ -1,16 +1,22 @@
 const sqlite3 = require('sqlite3').verbose();
 
+function connecteSqlite(){
+    return new Promise((resolve,reject)=>{
+        const db= new sqlite3.Database('./uploads/db.sqlite', sqlite3.OPEN_READWRITE,(err)=>{
+            if(err){
+                console.log('[Sqlite-error]:');
+                console.error(err.message);
+                reject(err);
+            }
+            console.log('[Sqlite]:SQlite connected');
+            resolve(db);
+        });
+    })
+    
+}
+    
 
-    const db= new sqlite3.Database('./data/db.sqlite', sqlite3.OPEN_READWRITE,(err)=>{
-        if(err){
-            console.log('[error]');
-            console.error(err.message);
-        }
-        console.log('Conectado con Base de datos SQlite');
-    });
-
-
-function readTable(query){
+function readTable(query,db){
     return new Promise((resolve,reject)=>{
         db.serialize(()=>{
             db.all(query, function(err,rows){     
@@ -24,5 +30,5 @@ function readTable(query){
 }
 module.exports = {
     readTable,
-   //connectedSqlite,
+    connecteSqlite,
 }

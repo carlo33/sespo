@@ -6,11 +6,11 @@ const  styles = require('./featuresPdf/styles');
 const contentPdf = require('./featuresPdf/content');
 const response = require('../../network/response');
 const store = require('../MySql/mysql');
+const error = require('../../utils/error');
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 async function generatePdfVisitors(req,res){
     let nameProject ='';
     let dataVisitors=[];
-    let dataVisitorDetails=[];
     /////Read name project
     await store.getNameProject('project',req.body.tenantId,req.body.projectId)
         .then((result)=>{
@@ -18,20 +18,10 @@ async function generatePdfVisitors(req,res){
             nameProject=name;
         })
         .catch((err)=>{
-            console.log(err);
+            console.log('[obtain name porject]:',err);
             response.error(req,res,'Not find data')
         })
-    ////Read table vistor_details
-    await store.list('visitor_details',req.body.tenantId,req.body.projectId,req.body.month,req.body.year)
-    .then((result)=>{
-        dataVisitorDetails=result;
-        console.log('[Result Visitor details]:',dataVisitorDetails);
-    })
-    .catch((err)=>{
-        console.log(err);
-        response.error(req,res,'Not find data');
-    })    
-    ////Read table visitors
+    ////Read tables visitors and vistitors details
     await store.listVisitors(req.body.tenantId,req.body.projectId,req.body.month,req.body.year)
         .then((result)=>{
             dataVisitors=result;
@@ -41,26 +31,16 @@ async function generatePdfVisitors(req,res){
             console.log(err);
             response.error(req,res,'Not find data')
         })
-    ////Join tables 
-    function getIdOfVisitors(data){
-        let arrayIds = [];
-        data.filter(item=> arrayIds.push(item['visitor_id']))
-        return arrayIds;
-    }
-    function searchIdVisitor(visitorId,table){
-        let key = 'visitor_id';
-        return table.filter(item=>item[key]===visitorId);
-    }
-    /////new Format data for PDF visitors
     let dataPdfRows = [];
     dataPdfRows.push(['Item','Apellidos y Nombres','DNI','Fecha','Hora','Temp.','Motivo de visita','Observación']);
-    let arrayIdVisitors=getIdOfVisitors(dataVisitorDetails);
-    for (let visitorId of arrayIdVisitors ){
-        let [{last_name:lastName,first_name:firstName,dni:dni}] =searchIdVisitor(visitorId,dataVisitors);
-        let [{date_format:date,time:time,temperature:temperature,reason:reason,observation:observation}] =searchIdVisitor(visitorId,dataVisitorDetails);
-        dataPdfRows.push([`${visitorId}`,`${lastName} ${firstName}`,`${dni}`,`${date}`,`${time}`,`${temperature}`,`${reason}`,`${observation}`]);
+    for (let visitorId of dataVisitors){
+        let i = 1;
+        let {last_name:lastName,first_name:firstName,dni:dni,date_format:date,time:time,temperature:temperature,reason:reason,observation:observation} = visitorId
+        dataPdfRows.push([`${i}`,`${lastName} ${firstName}`,`${dni}`,`${date}`,`${time}`,`${temperature}`,`${reason}`,`${observation}`]);
+        i++;
     }
-    console.log('[Final Result]:',dataPdfRows);
+    console.log('[Result Visitors:]:',dataPdfRows);
+    
     /////Generate pdf
     let content = contentPdf.structureContentPdfVisitors(nameProject,dataPdfRows)
     let docDefinition = {
@@ -93,7 +73,7 @@ async function generatePdfPersonal(req,res){
             numberDni=dni;
         })
         .catch((err)=>{
-            console.log(err);
+            console.log('[obtain header pdf personal]',err);
             response.error(req,res,'Not find data')
         })
     ////Read questions
@@ -105,7 +85,7 @@ async function generatePdfPersonal(req,res){
             } 
         })
         .catch((err)=>{
-            console.log(err);
+            console.log('[obtain questions]',err);
             response.error(req,res,'Not find data')
         })
     console.log('[Result Questions]:',questions);
@@ -116,7 +96,7 @@ async function generatePdfPersonal(req,res){
     }
     console.log('[Result Questions]:',formatQuestions);
     ////Read day of month for personal
-    await store.getDaysOfMonthForPeronal(req.body.tenantId,req.body.projectId,req.body.personalId,req.body.month,req.body.year)
+    await store.getDaysOfMonthForPersonal(req.body.tenantId,req.body.projectId,req.body.personalId,req.body.month,req.body.year)
         .then((results)=>{
             for(let result of results){
                 let {"DATE_FORMAT(A.date,'%d')":day,moment:moment}=result;
@@ -125,14 +105,15 @@ async function generatePdfPersonal(req,res){
             }
         })
         .catch((err)=>{
-            console.log(err);
+            console.log('[obtein days of month for personal]',err);
             response.error.apply(req,res,'Not find data')
         }
         )
     console.log('[Result Days - Moment]',daysOfPersonal,momentsOfDay);
     ////Read answer
     if(daysOfPersonal.length!=momentsOfDay.length){
-        throw new Error('Error respecto a los moment');
+        //throw new Error('Error respecto a los moment');
+        throw error('Error abouts moment',500);
     }
     dataPersonAnswer.push(['Fecha','Desc.','P1','P2','P3','P4.','P5','P6','P7','P8','P9','P10.','P11','P12','P13']);
     let indexMoment=0;
@@ -152,13 +133,13 @@ async function generatePdfPersonal(req,res){
             }
         })
         .catch((err)=>{
-            console.log(err);
+            console.log('[obtein answer perosnal]:',err);
             response.error(req,res,'Not find data')
         }) 
         indexMoment++;
         dataPersonAnswer.push(rowAnswerTemporal);
     }
-    console.log('[Result final]:',dataPersonAnswer);
+    console.log('[Result Personal]:',dataPersonAnswer);
 //////Generate pdf
     let content = contentPdf.structureContentPdfPersonal(nameProject,namePersonal,numberDni,dataPersonAnswer,formatQuestions)
     let docDefinition = {
@@ -176,14 +157,21 @@ async function generatePdfPersonal(req,res){
 async function deletePdfVisitors(){
     fs.unlink('pdfs/visitors.pdf',(err)=>{
         if(err) return err;
-        console.log('File removed')
+        console.log('File removed');
         return true;
     })
 }
 async function deletePdfPersonal(){
     fs.unlink('pdfs/personal.pdf',(err)=>{
         if(err) return err;
-        console.log('File removed')
+        console.log('File removed');
+        return true;
+    })
+}
+async function deleteBdSqlite(){
+    fs.unlink('uploads/db.sqlite',(err)=>{
+        if(err) return err;
+        console.log('Bd removed');
         return true;
     })
 }
@@ -193,4 +181,5 @@ module.exports = {
     generatePdfPersonal,
     deletePdfVisitors,
     deletePdfPersonal,
+    deleteBdSqlite,
 }

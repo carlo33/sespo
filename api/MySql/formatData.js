@@ -27,11 +27,10 @@ function formatData(table,predata){
 }
 function formatDataProyect(predata){
     let data = {};
-    let client_project_id=config.api.project;
+    //let client_project_id=config.api.project;
     let created_at=formatDate(predata.created_at);
     data={
-        client_project_id:client_project_id,
-        mobile_project_id:predata.mobile_project_id,
+        client_project_id:predata.mobile_project_id,
         type:predata.type,
         name:predata.name,
         resident:predata.resident,
@@ -56,7 +55,7 @@ function formatDataVisitor(predata){
         last_name:predata.last_name,
         is_deleted:0,
         tenant_id:predata.tenant_id,
-        client_project_id:config.api.project,
+        client_project_id:predata.project_id,
     }
     return data;
 }
@@ -75,7 +74,6 @@ function formatDataVisitorDetails(predata){
         observation:predata.observation,
         is_deleted:0,
         tenant_id:predata.tenant_id,
-        client_project_id:config.api.project,
     }
     return data;
 }
@@ -85,11 +83,11 @@ function formatDataQuestions(predata){
     data={
         question_id:predata.mobile_question_id,
         description:predata.description,
-        is_editable:predata.is_editable,
+        status:predata.status,
         type:predata.type,
         is_deleted:0,
         tenant_id:predata.tenant_id,
-        client_project_id:config.api.project,
+        client_project_id:predata.project_id,
     }
     return data;
 }
@@ -106,7 +104,7 @@ function formatDataPersonal(predata){
         address:predata.address,
         is_deleted:0,
         tenant_id:predata.tenant_id,
-        client_project_id:config.api.project,
+        client_project_id:predata.project_id,
     }
     return data;
 }
@@ -120,11 +118,12 @@ function formatDataPersonQuestion(predata){
         answer:predata.answer,
         moment:predata.moment,
         type:predata.type,
+        is_deleted:0,
         personal_id:predata.personal_id,
         question_id:predata.question_id,
-        is_deleted:0,
         tenant_id:predata.tenant_id,
-        client_project_id:config.api.project,
+        client_project_id:1,
+        //-----------------------------------
     }
     return data;
 }
