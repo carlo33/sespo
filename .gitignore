@@ -1,7 +1,7 @@
 
 # Created by https://www.toptal.com/developers/gitignore/api/macos
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos
-
+node_modules/
 ### macOS ###
 # General
 .DS_Store
@@ -32,4 +32,3 @@ Temporary Items
 .apdisk
 
 # End of https://www.toptal.com/developers/gitignore/api/macos
-node_modules/
