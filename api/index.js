@@ -15,7 +15,7 @@ app.use(express.json());
 const swaggerDoc = require('./swagger.json');
 
 //ROUTER
-app.use('/api/sespo/test',test)
+app.use('/test',test)
 app.use('/api/sespo',pdf);
 app.use('/api/sespo/login',auth);
 app.use('/api/sespo/user',user);
