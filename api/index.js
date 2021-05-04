@@ -21,7 +21,6 @@ app.use('/api/sespo/login',auth);
 app.use('/api/sespo/user',user);
 app.use('/api/sespo/email',email);
 app.use('/api-docs',swaggerUi.serve, swaggerUi.setup(swaggerDoc));
-
 app.use(errors);
 
 app.listen(config.api.port, ()=>{
