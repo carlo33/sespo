@@ -122,8 +122,6 @@ function formatDataPersonQuestion(predata){
         personal_id:predata.personal_id,
         question_id:predata.question_id,
         tenant_id:predata.tenant_id,
-        client_project_id:1,
-        //-----------------------------------
     }
     return data;
 }

@@ -165,6 +165,15 @@ function getNameProject(table,tenantId,projectId,){
     })
 }
 //////
+function getProjectIdForPersonal(tenantId,personalId,){
+    return new Promise((resolve,reject)=>{
+        connection.query(`SELECT client_project_id FROM personal WHERE tenant_id='${tenantId}' AND personal_id='${personalId}' `,(err,result)=>{
+            if(err) return reject(err);
+            resolve(result);
+        })
+    })
+}
+//////
 function getHeaderPdfPersonal(tenantId,projectId,personalId){
     return new Promise((resolve,reject)=>{
         connection.query(`SELECT A.first_name, A.last_name, A.dni, B.name FROM personal A LEFT JOIN project B ON A.client_project_id=B.client_project_id WHERE A.tenant_id='${tenantId}' AND A.client_project_id = ${projectId} AND A.personal_id=${personalId} AND A.is_deleted=0 `,(err,result)=>{
@@ -289,6 +298,7 @@ module.exports={
     getAnswerPersonal,
     getDaysOfMonthForPersonal,
     getCode,
+    getProjectIdForPersonal,
     upsert,
     query,
     searchUser,

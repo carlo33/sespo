@@ -71,7 +71,10 @@ async function synchronizeData(req,res){
                                 let monthSelect = parseInt(newDate[1]);
                                 let daySelect = parseInt(newDate[2]);
                                 personalId=data.personal_id;
-                                projectId=data.client_project_id;
+                                let result = await storeMysql.getProjectIdForPersonal(tenantId,personalId);
+                                projectId= [result[0].client_project_id];
+                                console.log('[porjectId get]',projectId);
+                                //projectId=data.client_project_id;
                                 let personalQuestionId = data.personal_question_id;
                                 let newAnswer = data.answer;
                                 await storeMysql.updatePersonQuestion(tenantId,projectId,personalId,daySelect,monthSelect,yearSelect,personalQuestionId,newAnswer);
