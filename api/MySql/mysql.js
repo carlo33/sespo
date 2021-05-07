@@ -185,7 +185,7 @@ function getHeaderPdfPersonal(tenantId,projectId,personalId){
 //////
 function getQuestions(tenantId,projectId){
     return new Promise((resolve,reject)=>{
-        connection.query(`SELECT description, question_id FROM questions WHERE tenant_id='${tenantId}' AND client_project_id = ${projectId}`,(err,result)=>{
+        connection.query(`SELECT description, question_id FROM questions WHERE tenant_id='${tenantId}' AND client_project_id = ${projectId} AND status=1`,(err,result)=>{
             if(err) return reject(err);
             resolve(result);
         })
@@ -203,7 +203,7 @@ function  getDaysOfMonthForPersonal(tenantId,projectId,personalId,month,year){
 //////
 function getAnswerPersonal(tenantId,projectId,personalId,month,year,day,moment){
     return new Promise((resolve,reject)=>{
-        connection.query(`SELECT A.answer, A.question_id FROM person_question A LEFT JOIN personal B ON A.personal_id=B.personal_id WHERE B.tenant_id='${tenantId}'  AND B.client_project_id = ${projectId} AND B.personal_id=${personalId} AND YEAR(A.date)=${year} AND MONTH(A.date)=${month} AND DAY(A.date)=${day} AND A.moment=${moment} AND A.is_deleted=0`,(err,result)=>{
+        connection.query(`SELECT A.answer, A.question_id FROM person_question A LEFT JOIN personal B ON A.personal_id=B.personal_id WHERE B.tenant_id='${tenantId}'  AND B.client_project_id = ${projectId} AND B.personal_id=${personalId} AND YEAR(A.date)=${year} AND MONTH(A.date)=${month} AND DAY(A.date)=${day} AND A.moment=${moment} AND A.is_deleted=0 AND status=1`,(err,result)=>{
             if(err) return reject(err);
             resolve(result);
         })

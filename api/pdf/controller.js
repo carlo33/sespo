@@ -63,6 +63,10 @@ async function generatePdfPersonal(req,res){
     let daysOfPersonal=[];
     let momentsOfDay=[];
     let dataPersonAnswer=[];
+    let amountQuestions;
+    let headerQuestions=['Fecha','Desc.'];
+    let spacesColumnsPdf=[70,50];
+    let numberQuestion=0;
     ////Read name,personal,dni
     await store.getHeaderPdfPersonal(req.body.tenantId,req.body.projectId,req.body.personalId)
         .then((result)=>{
@@ -80,19 +84,37 @@ async function generatePdfPersonal(req,res){
     await store.getQuestions(req.body.tenantId,req.body.projectId)
         .then((results)=>{
             for (let result of results ){
+                numberQuestion++;
                 let {description:description,question_id:questionId}=result;
-                questions.push(['P'+questionId,description]);
+                questions.push(['P'+numberQuestion,description]);
             } 
+            numberQuestion=0;
         })
         .catch((err)=>{
             console.log('[obtain questions]',err);
             response.error(req,res,'Not find data')
         })
     console.log('[Result Questions]:',questions);
+    amountQuestions =  questions.length;
+    let spaceColumnQuestion = Math.round(520/amountQuestions);
+    for(let i =0; i<amountQuestions;i++){
+        headerQuestions.push(questions[i][0])  
+        spacesColumnsPdf.push(spaceColumnQuestion)
+    }
+    //dataPersonAnswer.push(['Fecha','Desc.','P1','P2','P3','P4.','P5','P6','P7','P8','P9','P10.','P11','P12','P13']);
+    dataPersonAnswer.push(headerQuestions);
+    console.log('[Result]',dataPersonAnswer);
+    console.log('[Array]',spacesColumnsPdf);
+    //,
     /////format questions
     let formatQuestions=[];
-    for(let i=0;i<questions.length/2;i++){
-        formatQuestions[i]=questions[i].concat(questions[6+i]);
+    let halfNumberQuestions=Math.round(questions.length/2);
+    for(let i=0;i<halfNumberQuestions;i++){
+        if(halfNumberQuestions+i==questions.length){
+            formatQuestions[i]=questions[i].concat(' ',' ');
+        }else{
+            formatQuestions[i]=questions[i].concat(questions[halfNumberQuestions+i]);
+        }
     }
     console.log('[Result Questions]:',formatQuestions);
     ////Read day of month for personal
@@ -115,7 +137,7 @@ async function generatePdfPersonal(req,res){
         //throw new Error('Error respecto a los moment');
         throw error('Error abouts moment',500);
     }
-    dataPersonAnswer.push(['Fecha','Desc.','P1','P2','P3','P4.','P5','P6','P7','P8','P9','P10.','P11','P12','P13']);
+    
     let indexMoment=0;
     for (let day of daysOfPersonal){
         let rowAnswerTemporal=[];
@@ -127,9 +149,11 @@ async function generatePdfPersonal(req,res){
         }
         await store.getAnswerPersonal(req.body.tenantId,req.body.projectId,req.body.personalId,req.body.month,req.body.year,day,momentsOfDay[indexMoment])
         .then((results)=>{
+            console.log('[data]',results)
             for(let result of results){
                 let {answer:answer,question_id:questionId}=result;
-                rowAnswerTemporal[questionId+1]=answer;
+                rowAnswerTemporal[numberQuestion+2]=answer;
+                numberQuestion++;
             }
         })
         .catch((err)=>{
@@ -141,7 +165,7 @@ async function generatePdfPersonal(req,res){
     }
     console.log('[Result Personal]:',dataPersonAnswer);
 //////Generate pdf
-    let content = contentPdf.structureContentPdfPersonal(nameProject,namePersonal,numberDni,dataPersonAnswer,formatQuestions)
+    let content = contentPdf.structureContentPdfPersonal(nameProject,namePersonal,numberDni,dataPersonAnswer,formatQuestions,spacesColumnsPdf)
     let docDefinition = {
         content:content,
         pageOrientation:'landscape',

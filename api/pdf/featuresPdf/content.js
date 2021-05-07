@@ -23,7 +23,7 @@ function structureContentPdfVisitors(nameProject,rows){
     ];
     return content;
 }
-function structureContentPdfPersonal(nameProject,namePersonal,dni,rows,headerRows,questions){
+function structureContentPdfPersonal(nameProject,namePersonal,dni,rows,questions,spacesColumns){
     let content= [
         {
             text:"FORMATO DE CONTROL DIARIO DE PERSONAL", 
@@ -44,7 +44,7 @@ function structureContentPdfPersonal(nameProject,namePersonal,dni,rows,headerRow
         {
             style:'tableExample',
             table:{
-                widths: headerRows,
+                widths: spacesColumns,
                 body: rows
             }, 
             layout:{
