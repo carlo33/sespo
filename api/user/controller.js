@@ -7,7 +7,6 @@ const TABLA = 'user';
 ////
 async function upsert(body){
     const user = {
-        user_id:body.userId,
         username:body.username,
         name:body.name,
         email:body.email,
@@ -42,7 +41,11 @@ async function upsert(body){
             username:user.username,
             password:user.password
         }
-        return  auth.getToken(data);
+        let token = await auth.getToken(data);
+        return {
+            tenantId:user.tenant_id,
+            token:token,
+        }
     }
 }
 /////

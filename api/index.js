@@ -26,3 +26,4 @@ app.use(errors);
 app.listen(config.api.port, ()=>{
   console.log('API escuchando en el puerto:',config.api.port);
 })
+module.exports=app;

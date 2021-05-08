@@ -4,7 +4,7 @@
   "description": "SESPO",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "author": "carlos yaco",
   "license": "ISC",
@@ -19,5 +19,11 @@
     "pdfmake": "^0.1.71",
     "sqlite3": "^5.0.2",
     "swagger-ui-express": "^4.1.6"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "jest": "^26.6.3",
+    "supertest": "^6.1.3"
   }
 }
