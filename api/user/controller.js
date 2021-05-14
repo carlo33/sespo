@@ -51,7 +51,6 @@ async function upsert(body){
 /////
 async function update(body){
     const user = {
-        user_id:body.userId,
         username:body.username,
         name:body.name,
         email:body.email,
