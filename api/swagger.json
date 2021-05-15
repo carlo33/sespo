@@ -253,10 +253,7 @@
       "User": {
         "type": "object",
         "properties": {
-          "userId": {
-            "type": "string"
-          },
-          "tenantId": {
+          "tenant_id": {
             "type": "string"
           },
           "username": {
@@ -268,10 +265,10 @@
           "email": {
             "type": "string"
           },
-          "licenceKey": {
+          "licence_key": {
             "type": "string"
           },
-          "licenceType": {
+          "licence_type": {
             "type": "string"
           },
           "emtity": {
@@ -321,10 +318,10 @@
           "year": {
             "type": "string"
           },
-          "projectId": {
+          "project_id": {
             "type": "string"
           },
-          "tenantId": {
+          "tenant_id": {
             "type": "string"
           }
         }
@@ -332,13 +329,13 @@
       "pdfPersonal": {
         "type": "object",
         "properties": {
-          "personalId": {
+          "personal_id": {
             "type": "string"
           },
-          "projectId": {
+          "project_id": {
             "type": "string"
           },
-          "tenantId": {
+          "tenant_id": {
             "type": "string"
           },
           "month": {

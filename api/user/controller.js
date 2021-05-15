@@ -10,14 +10,14 @@ async function upsert(body){
         username:body.username,
         name:body.name,
         email:body.email,
-        licence_key:body.licenceKey,
-        licence_type:body.licenceType,
+        licence_key:body.licence_key,
+        licence_type:body.licence_type,
         entity:body.entity,
         is_deleted:0,
         code_verification:0,
     }
-    if(body.tenantId){
-        user.tenant_id=body.tenantId;
+    if(body.tenant_id){
+        user.tenant_id=body.tenant_id;
     }else{
         user.tenant_id=nanoid();
     }
@@ -43,7 +43,7 @@ async function upsert(body){
         }
         let token = await auth.getToken(data);
         return {
-            tenantId:user.tenant_id,
+            tenant_id:user.tenant_id,
             token:token,
         }
     }
@@ -54,14 +54,14 @@ async function update(body){
         username:body.username,
         name:body.name,
         email:body.email,
-        licence_key:body.licenceKey,
-        licence_type:body.licenceType,
+        licence_key:body.licence_key,
+        licence_type:body.licence_type,
         entity:body.entity,
         is_deleted:0,
         code_verification:0,
     }
-    if(body.tenantId){
-        user.tenant_id=body.tenantId;
+    if(body.tenant_id){
+        user.tenant_id=body.tenant_id;
     }else{
         user.tenant_id=nanoid();
     }

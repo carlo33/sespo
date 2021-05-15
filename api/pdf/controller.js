@@ -12,7 +12,7 @@ async function generatePdfVisitors(req,res){
     let nameProject ='';
     let dataVisitors=[];
     /////Read name project
-    await store.getNameProject('project',req.body.tenantId,req.body.projectId)
+    await store.getNameProject('project',req.body.tenant_id,req.body.project_id)
         .then((result)=>{
             let [{name:name}]=result;
             nameProject=name;
@@ -22,7 +22,7 @@ async function generatePdfVisitors(req,res){
             response.error(req,res,'Not find data')
         })
     ////Read tables visitors and vistitors details
-    await store.listVisitors(req.body.tenantId,req.body.projectId,req.body.month,req.body.year)
+    await store.listVisitors(req.body.tenant_id,req.body.project_id,req.body.month,req.body.year)
         .then((result)=>{
             dataVisitors=result;
             console.log('[Result Visitor] :',dataVisitors);
@@ -68,7 +68,7 @@ async function generatePdfPersonal(req,res){
     let spacesColumnsPdf=[70,50];
     let numberQuestion=0;
     ////Read name,personal,dni
-    await store.getHeaderPdfPersonal(req.body.tenantId,req.body.projectId,req.body.personalId)
+    await store.getHeaderPdfPersonal(req.body.tenant_id,req.body.project_id,req.body.personal_id)
         .then((result)=>{
             console.log(result);
             let [{ name:project,first_name:firstName,last_name:lastName,dni:dni}]=result;
@@ -81,7 +81,7 @@ async function generatePdfPersonal(req,res){
             response.error(req,res,'Not find data')
         })
     ////Read questions
-    await store.getQuestions(req.body.tenantId,req.body.projectId)
+    await store.getQuestions(req.body.tenant_id,req.body.project_id)
         .then((results)=>{
             for (let result of results ){
                 numberQuestion++;
@@ -118,7 +118,7 @@ async function generatePdfPersonal(req,res){
     }
     console.log('[Result Questions]:',formatQuestions);
     ////Read day of month for personal
-    await store.getDaysOfMonthForPersonal(req.body.tenantId,req.body.projectId,req.body.personalId,req.body.month,req.body.year)
+    await store.getDaysOfMonthForPersonal(req.body.tenant_id,req.body.project_id,req.body.personal_id,req.body.month,req.body.year)
         .then((results)=>{
             for(let result of results){
                 let {"DATE_FORMAT(A.date,'%d')":day,moment:moment}=result;
@@ -147,7 +147,7 @@ async function generatePdfPersonal(req,res){
         }else{
             rowAnswerTemporal[1]='Salida';
         }
-        await store.getAnswerPersonal(req.body.tenantId,req.body.projectId,req.body.personalId,req.body.month,req.body.year,day,momentsOfDay[indexMoment])
+        await store.getAnswerPersonal(req.body.tenant_id,req.body.project_id,req.body.personal_id,req.body.month,req.body.year,day,momentsOfDay[indexMoment])
         .then((results)=>{
             console.log('[data]',results)
             for(let result of results){

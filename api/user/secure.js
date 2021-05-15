@@ -3,7 +3,7 @@ module.exports=function checkAuth(action){
     function middelware(req,res,next){
         switch(action){
             case 'update':
-                const ownerId=req.body.tenantId;
+                const ownerId=req.body.tenant_id;
                 console.log('[tenantId]:',ownerId);
                 auth.check.own(req,ownerId);
                 next();
