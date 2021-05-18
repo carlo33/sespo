@@ -276,10 +276,29 @@ function getCode(table,email){
         })
     })
 }
+////
+function getTenantId(table){
+    return new Promise((resolve,reject)=>{
+        connection.query(`SELECT AUTO_INCREMENT FROM  INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'CQmHCA1iJi' AND  TABLE_NAME='${table}';`,(err,result)=>{
+            if(err) return reject(err);
+            resolve(result);
+        })
+    })
+}
+////
+function lastTenantId(){
+    return new Promise((resolve,reject)=>{
+        connection.query(`SELECT LAST_INSERT_ID();`,(err,result)=>{
+            if(err) return reject(err);
+            resolve(result);
+        })
+    })
+}
 module.exports={
     insert,
     listVisitors,
     //list,
+    lastTenantId,
     update,
     updateProject,
     updateTypeId,
@@ -299,6 +318,7 @@ module.exports={
     getDaysOfMonthForPersonal,
     getCode,
     getProjectIdForPersonal,
+    getTenantId,
     upsert,
     query,
     searchUser,

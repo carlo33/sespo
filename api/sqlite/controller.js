@@ -36,6 +36,7 @@ async function synchronizeData(req,res){
                 data =  formatData.formatData(nameTables[q],predata);
                 switch (dataSqlite[i].action){
                     case 'CREATE':
+                        console.log(data);
                         await storeMysql.insert(nameTables[q],data);
                         break;
                     case 'UPDATE':

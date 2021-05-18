@@ -78,18 +78,8 @@ db ={
     ]
 }
 async function list(table){
-    return db[table]||[]
-}
-class ServicesMocks {
-    async upsert(){
-        return new Promise.resolve(db[user]);
-    }
-    async update(){
-        return new Promise.resolve(db[user]);
-    }
-}
-
-module.exports = {
+    return db[table] || [];
+  }
+module.exports ={
     list,
-    ServicesMocks
 }

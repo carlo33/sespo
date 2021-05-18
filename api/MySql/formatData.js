@@ -27,7 +27,6 @@ function formatData(table,predata){
 }
 function formatDataProyect(predata){
     let data = {};
-    //let client_project_id=config.api.project;
     let created_at=formatDate(predata.created_at);
     data={
         client_project_id:predata.mobile_project_id,
@@ -122,6 +121,7 @@ function formatDataPersonQuestion(predata){
         personal_id:predata.personal_id,
         question_id:predata.question_id,
         tenant_id:predata.tenant_id,
+        status:predata.status,
     }
     return data;
 }
