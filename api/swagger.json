@@ -40,7 +40,7 @@
           ],
           "responses": {
             "200": {
-              "description": "error:false , status:200, body: 'tokenId'",
+              "description": "error:false , status:201, body: 'tokenId'",
               "schema": {
                 "$ref": "#/definitions/ApiResponse"
               }

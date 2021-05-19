@@ -37,15 +37,6 @@ function insert(table,data){
         })
     })
 }
-//////-----------------------
-function list(table,tenantId,projectId,monthSelect,yearSelect){
-    return new Promise((resolve,reject)=>{
-        connection.query(`SELECT *, DATE_FORMAT(date,'%d/%m/%y') AS date_format FROM ${table} WHERE MONTH(date)=${monthSelect} AND YEAR(date)=${yearSelect} AND client_project_id=${projectId} AND tenant_id=${tenantId}`,(err,result)=>{
-            if(err) return reject(err);
-            resolve(result);
-        })
-    })
-}
 //////
 function listVisitors(tenantId,projectId,monthSelect,yearSelect){
     return new Promise((resolve,reject)=>{
@@ -147,9 +138,9 @@ function deletePersonQuestion(tenantId,projectId,personalId,daySelect,monthSelec
     })
 }
 //////
-function deletedTables(table){
+function deletedTables(table,tenantId){
     return new Promise((resolve,reject)=>{
-        connection.query(`DELETE  FROM ${table}`,(err,result)=>{
+        connection.query(`DELETE  FROM ${table} WHERE tenant_id=${tenantId}`,(err,result)=>{
             if(err) return reject(err);
             resolve(result);
         })
@@ -208,11 +199,6 @@ function getAnswerPersonal(tenantId,projectId,personalId,month,year,day,moment){
             resolve(result);
         })
     })
-}
-
-//////
-function upsert(table,data){
-    return insert(table,data);
 }
 //////
 function update(table,data){
@@ -297,7 +283,6 @@ function lastTenantId(){
 module.exports={
     insert,
     listVisitors,
-    //list,
     lastTenantId,
     update,
     updateProject,
@@ -319,7 +304,6 @@ module.exports={
     getCode,
     getProjectIdForPersonal,
     getTenantId,
-    upsert,
     query,
     searchUser,
     insertCodeVerification,

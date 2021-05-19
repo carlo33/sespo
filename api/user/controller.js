@@ -1,11 +1,10 @@
-//const {nanoid}=require('nanoid');
 const auth = require('../auth/controller');
 const store = require('../MySql/mysql');
 const token = require('../../auth/index');
 const controllerEmail = require('../email/controller'); 
 const TABLE = 'user';
 ////
-async function upsert(body){
+async function insert(body){
     
     const isUserExits = await store.searchUser(TABLE,body.username,body.email);
     if (isUserExits){
@@ -22,7 +21,7 @@ async function upsert(body){
             is_deleted:0,
             code_verification:0,
         }
-        await store.upsert(TABLE,user);
+        await store.insert(TABLE,user);
         console.log('[user regestered]');
         let [{'LAST_INSERT_ID()': tenantId}]= await store.lastTenantId();
         console.log('[tenantId]',tenantId);
@@ -74,20 +73,16 @@ async function update(body){
 ////
 async function getCode(body){
     let data = await store.query(TABLE,{email:body.email})
-    console.log(data);
     if(data){
-        //generar codigo 6 digitos
         let codeVerification = Math.floor(100000 + Math.random() * 900000);
         await store.insertCodeVerification(TABLE,codeVerification,body.email);
         return controllerEmail.sendCode(body.email,codeVerification);
-        //return 
     } else{
         return null;
     }
 }
 async function setNewPassword(body){
     let [{code_verification:code}] = await store.getCode(TABLE,body.email);
-    console.log(code);
     if(body.code==code){
         let data = await store.query(TABLE,{email:body.email})
         let user ={
@@ -95,16 +90,22 @@ async function setNewPassword(body){
             username:data.username,
             password:body.password
         }
-        //data.password=body.password;
         console.log(user);
         return auth.update(user);
     }else{
         return null;
     }
 }
+async function deleteUser(body){
+    let tenantId=body.tenant_id;
+    await store.deletedTables('auth',tenantId);
+    await store.deletedTables('user',tenantId);
+    return true;
+}
 module.exports={
-    upsert,
+    insert,
     update,
     getCode,
     setNewPassword,
+    deleteUser,
 }

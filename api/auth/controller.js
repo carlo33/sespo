@@ -14,7 +14,7 @@ async function upsert(data){
     if(data.password){
         authData.password= await bcrypt.hash(data.password,5)
     }
-    return store.upsert(TABLA,authData);
+    return store.insert(TABLA,authData);
 }
 async function update(data){
     const authData={
@@ -38,8 +38,7 @@ async function login(username,password){
             if(areEqual===true){
                 return auth.sign(data);
             }else{
-                throw error('User or password incorect',401)
-                //throw new Error('Information user invalided');
+                throw error('User or password incorect',401);
             }
         })
 }

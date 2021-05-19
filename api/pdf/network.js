@@ -64,7 +64,7 @@ function synchronizeData(req,res,next){
         .catch(next)
 }
 function deletedInformationMysql(req,res,next){
-    controllerSqlite.deletedInformationMysql()
+    controllerSqlite.deletedInformationMysql(req.body)
         .then(()=>{
             response.success(req,res,'Ok information deleted',200);
         })

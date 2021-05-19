@@ -40,7 +40,6 @@ async function generatePdfVisitors(req,res){
         i++;
     }
     console.log('[Result Visitors:]:',dataPdfRows);
-    
     /////Generate pdf
     let content = contentPdf.structureContentPdfVisitors(nameProject,dataPdfRows)
     let docDefinition = {
@@ -85,7 +84,7 @@ async function generatePdfPersonal(req,res){
         .then((results)=>{
             for (let result of results ){
                 numberQuestion++;
-                let {description:description,question_id:questionId}=result;
+                let {description:description}=result;
                 questions.push(['P'+numberQuestion,description]);
             } 
             numberQuestion=0;
@@ -101,11 +100,9 @@ async function generatePdfPersonal(req,res){
         headerQuestions.push(questions[i][0])  
         spacesColumnsPdf.push(spaceColumnQuestion)
     }
-    //dataPersonAnswer.push(['Fecha','Desc.','P1','P2','P3','P4.','P5','P6','P7','P8','P9','P10.','P11','P12','P13']);
     dataPersonAnswer.push(headerQuestions);
     console.log('[Result]',dataPersonAnswer);
     console.log('[Array]',spacesColumnsPdf);
-    //,
     /////format questions
     let formatQuestions=[];
     let halfNumberQuestions=Math.round(questions.length/2);
@@ -134,7 +131,6 @@ async function generatePdfPersonal(req,res){
     console.log('[Result Days - Moment]',daysOfPersonal,momentsOfDay);
     ////Read answer
     if(daysOfPersonal.length!=momentsOfDay.length){
-        //throw new Error('Error respecto a los moment');
         throw error('Error abouts moment',500);
     }
     
@@ -151,7 +147,7 @@ async function generatePdfPersonal(req,res){
         .then((results)=>{
             console.log('[data]',results)
             for(let result of results){
-                let {answer:answer,question_id:questionId}=result;
+                let {answer:answer}=result;
                 rowAnswerTemporal[numberQuestion+2]=answer;
                 numberQuestion++;
             }

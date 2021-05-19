@@ -10,7 +10,7 @@ const query = ['SELECT entity_id, payload, action FROM synchronizes WHERE is_syn
 'SELECT entity_id, payload, action FROM synchronizes WHERE is_synchronized = 0 AND entity_code="T008"',
 'SELECT entity_id, payload, action FROM synchronizes WHERE is_synchronized = 0 AND entity_code="T003"'];
 const nameTables = ['project','questions','personal','visitor','visitor_details','person_question'];
-async function synchronizeData(req,res){
+async function synchronizeData(){
     let db;
     await store.connecteSqlite()
         .then((result)=>{
@@ -75,7 +75,6 @@ async function synchronizeData(req,res){
                                 let result = await storeMysql.getProjectIdForPersonal(tenantId,personalId);
                                 projectId= [result[0].client_project_id];
                                 console.log('[porjectId get]',projectId);
-                                //projectId=data.client_project_id;
                                 let personalQuestionId = data.personal_question_id;
                                 let newAnswer = data.answer;
                                 await storeMysql.updatePersonQuestion(tenantId,projectId,personalId,daySelect,monthSelect,yearSelect,personalQuestionId,newAnswer);
@@ -149,21 +148,21 @@ async function readTenantId(){
         .catch((err)=>{
             return err;
         })
-    if(isConnected == true){
+    if(isConnected){
         let response = await store.readTable(q,db);
-        let payload =JSON.parse(response[0].payload); 
-        return payload;
+        return JSON.parse(response[0].payload); 
     }else{
         return new Error('no connected');
 }   
 }
-async function deletedInformationMysql(req,res){
-    await storeMysql.deletedTables(nameTables[5]);
-    await storeMysql.deletedTables(nameTables[4]);
-    await storeMysql.deletedTables(nameTables[3]);
-    await storeMysql.deletedTables(nameTables[2]);
-    await storeMysql.deletedTables(nameTables[1]);
-    await storeMysql.deletedTables(nameTables[0]);
+async function deletedInformationMysql(body){
+    let tenantId=body.tenant_id;
+    await storeMysql.deletedTables(nameTables[5],tenantId);
+    await storeMysql.deletedTables(nameTables[4],tenantId);
+    await storeMysql.deletedTables(nameTables[3],tenantId);
+    await storeMysql.deletedTables(nameTables[2],tenantId);
+    await storeMysql.deletedTables(nameTables[1],tenantId);
+    await storeMysql.deletedTables(nameTables[0],tenantId);
     return true
 }
 module.exports = {
