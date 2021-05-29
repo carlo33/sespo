@@ -18,7 +18,7 @@ async function generatePdfVisitors(req,res){
             nameProject=name;
         })
         .catch((err)=>{
-            console.log('[obtain name porject]:',err);
+            console.log('[Error get name porject]:',err);
             response.error(req,res,'Not find data')
         })
     ////Read tables visitors and vistitors details
@@ -28,13 +28,13 @@ async function generatePdfVisitors(req,res){
             console.log('[Result Visitor] :',dataVisitors);
         })
         .catch((err)=>{
-            console.log(err);
+            console.log('[Error get visitors]',err);
             response.error(req,res,'Not find data')
         })
     let dataPdfRows = [];
     dataPdfRows.push(['Item','Apellidos y Nombres','DNI','Fecha','Hora','Temp.','Motivo de visita','Observación']);
+    let i = 1;
     for (let visitorId of dataVisitors){
-        let i = 1;
         let {last_name:lastName,first_name:firstName,dni:dni,date_format:date,time:time,temperature:temperature,reason:reason,observation:observation} = visitorId
         dataPdfRows.push([`${i}`,`${lastName} ${firstName}`,`${dni}`,`${date}`,`${time}`,`${temperature}`,`${reason}`,`${observation}`]);
         i++;
@@ -76,7 +76,7 @@ async function generatePdfPersonal(req,res){
             numberDni=dni;
         })
         .catch((err)=>{
-            console.log('[obtain header pdf personal]',err);
+            console.log('[Error get header pdf personal]',err);
             response.error(req,res,'Not find data')
         })
     ////Read questions
@@ -90,7 +90,7 @@ async function generatePdfPersonal(req,res){
             numberQuestion=0;
         })
         .catch((err)=>{
-            console.log('[obtain questions]',err);
+            console.log('[Error get questions]',err);
             response.error(req,res,'Not find data')
         })
     console.log('[Result Questions]:',questions);

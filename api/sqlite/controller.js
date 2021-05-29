@@ -45,23 +45,23 @@ async function synchronizeData(){
                                 await storeMysql.updateProject(nameTables[q],data,tenantId);
                                 break;
                             case 'visitor':
-                                visitorId= data.visitor_id;
+                                visitorId= data.mobile_visitor_id;
                                 projectIdVisitors=data.client_project_id;
                                 await storeMysql.updateVisitors(data,tenantId,projectIdVisitors,visitorId);
                                 break;
                             case 'visitor_details':
-                                visitorId= data.visitor_id;
+                                visitorId= data.mobile_visitor_id;
                                 await storeMysql.updateVisitorDetails(data,tenantId,projectIdVisitors,visitorId);
                                 break;
                             case 'questions':
-                                typeId = 'question_id';
-                                questionId = data.question_id;
+                                typeId = 'mobile_question_id';
+                                questionId = data.mobile_question_id;
                                 projectId=data.client_project_id;
                                 await storeMysql.updateTypeId(nameTables[q],data,typeId,questionId,tenantId,projectId);
                                 break;
                             case 'personal':
-                                typeId = 'personal_id';
-                                personalId = data.personal_id;
+                                typeId = 'mobile_personal_id';
+                                personalId = data.mobile_personal_id;
                                 projectId=data.client_project_id;
                                 await storeMysql.updateTypeId(nameTables[q],data,typeId,personalId,tenantId,projectId);
                                 break;
@@ -71,11 +71,11 @@ async function synchronizeData(){
                                 let yearSelect=parseInt(newDate[0]);
                                 let monthSelect = parseInt(newDate[1]);
                                 let daySelect = parseInt(newDate[2]);
-                                personalId=data.personal_id;
+                                personalId=data.mobile_personal_id;
                                 let result = await storeMysql.getProjectIdForPersonal(tenantId,personalId);
                                 projectId= [result[0].client_project_id];
                                 console.log('[porjectId get]',projectId);
-                                let personalQuestionId = data.personal_question_id;
+                                let personalQuestionId = data.mobile_personal_question_id;
                                 let newAnswer = data.answer;
                                 await storeMysql.updatePersonQuestion(tenantId,projectId,personalId,daySelect,monthSelect,yearSelect,personalQuestionId,newAnswer);
                                 break;
@@ -91,24 +91,24 @@ async function synchronizeData(){
                                 break;
                             case 'visitor':
                                 projectIdVisitors=data.client_project_id;
-                                visitorId=data.visitor_id;
+                                visitorId=data.mobile_visitor_id;
                                 console.log(tenantId,projectIdVisitors,visitorId);
                                 await storeMysql.deleteVisitors(tenantId,projectIdVisitors,visitorId);
                                 break;
                             case 'visitor_details':
-                                visitorId= data.visitor_id;
+                                visitorId= data.mobile_visitor_id;
                                 await storeMysql.deleteVisitorDetails(tenantId,projectIdVisitors,visitorId);
                                 break;
                             case 'questions':
-                                typeId = 'question_id';
+                                typeId = 'mobile_question_id';
                                 projectId=data.client_project_id;
-                                questionId= data.question_id;
+                                questionId= data.mobile_question_id;
                                 await storeMysql.deleteTypeId(nameTables[q],tenantId,projectId,typeId,questionId);
                                 break;
                             case 'personal':
-                                typeId = 'personal_id';
+                                typeId = 'mobile_personal_id';
                                 projectId=data.client_project_id;
-                                personalId = data.personal_id;
+                                personalId = data.mobile_personal_id;
                                 await storeMysql.deleteTypeId(nameTables[q],tenantId,projectId,typeId,personalId);
                                 break;
                             case 'person_question':
@@ -117,9 +117,10 @@ async function synchronizeData(){
                                 let yearSelect=parseInt(newDate[0]);
                                 let monthSelect = parseInt(newDate[1]);
                                 let daySelect = parseInt(newDate[2]);
-                                personalId=data.personal_id;
-                                projectId=data.client_project_id;
-                                let personalQuestionId = data.personal_question_id;
+                                personalId=data.mobile_personal_id;
+                                let result = await storeMysql.getProjectIdForPersonal(tenantId,personalId);
+                                projectId= [result[0].client_project_id];
+                                let personalQuestionId = data.mobile_personal_question_id;
                                 await storeMysql.deletePersonQuestion(tenantId,projectId,personalId,daySelect,monthSelect,yearSelect,personalQuestionId);
                                 break;
                             default:

@@ -40,7 +40,7 @@ function insert(table,data){
 //////
 function listVisitors(tenantId,projectId,monthSelect,yearSelect){
     return new Promise((resolve,reject)=>{
-        connection.query(`SELECT A.visitor_id, A.first_name, A.last_name, A.dni, DATE_FORMAT(B.date,'%d/%m/%y') AS date_format , B.time, B.temperature,  B.reason, B.observation FROM visitor A LEFT JOIN visitor_details B ON A.visitor_id=B.visitor_id WHERE B.tenant_id='${tenantId}' AND A.client_project_id =${projectId} AND YEAR(B.date)=${yearSelect} AND MONTH(B.date)=${monthSelect} AND B.is_deleted=0 `,(err,result)=>{
+        connection.query(`SELECT A.mobile_visitor_id, A.first_name, A.last_name, A.dni, DATE_FORMAT(B.date,'%d/%m/%y') AS date_format , B.time, B.temperature,  B.reason, B.observation FROM visitor A LEFT JOIN visitor_details B ON A.mobile_visitor_id=B.mobile_visitor_id WHERE B.tenant_id='${tenantId}' AND A.client_project_id =${projectId} AND YEAR(B.date)=${yearSelect} AND MONTH(B.date)=${monthSelect} AND B.is_deleted=0 `,(err,result)=>{
             if(err) return reject(err);
             resolve(result);
         })
@@ -58,7 +58,7 @@ function updateProject(table, data, tenantId){
 //////
 function updateVisitors(data,tenantId, projectId,visitorId){
     return new Promise((resolve,reject)=>{
-        connection.query(`UPDATE visitor SET ? WHERE visitor_id=${visitorId} AND tenant_id='${tenantId}' AND client_project_id=${projectId}`,[data],(err,result)=>{
+        connection.query(`UPDATE visitor SET ? WHERE mobile_visitor_id=${visitorId} AND tenant_id='${tenantId}' AND client_project_id=${projectId}`,[data],(err,result)=>{
             if(err) return reject(err);
             resolve(result);
         })
@@ -67,7 +67,7 @@ function updateVisitors(data,tenantId, projectId,visitorId){
 //////
 function updateVisitorDetails(data, tenantId,projectId,visitorId){
     return new Promise((resolve,reject)=>{
-        connection.query(`UPDATE visitor_details A LEFT JOIN visitor B ON A.visitor_id=B.visitor_id SET A.visitor_detail_id=${data.visitor_detail_id}, A.visitor_id=${data.visitor_id}, A.date='${data.date}', A.time='${data.time}', A.temperature=${data.temperature}, A.reason='${data.reason}', A.observation='${data.observation}', A.is_deleted=${data.is_deleted}, A.tenant_id='${tenantId}' WHERE B.tenant_id='${tenantId}'  AND B.client_project_id=${projectId} AND B.visitor_id=${visitorId}`,(err,result)=>{
+        connection.query(`UPDATE visitor_details A LEFT JOIN visitor B ON A.mobile_visitor_id=B.mobile_visitor_id SET A.mobile_visitor_detail_id=${data.mobile_visitor_detail_id}, A.mobile_visitor_id=${data.mobile_visitor_id}, A.date='${data.date}', A.time='${data.time}', A.temperature=${data.temperature}, A.reason='${data.reason}', A.observation='${data.observation}', A.is_deleted=${data.is_deleted}, A.tenant_id='${tenantId}' WHERE B.tenant_id='${tenantId}'  AND B.client_project_id=${projectId} AND B.mobile_visitor_id=${visitorId}`,(err,result)=>{
             if(err) return reject(err);
             resolve(result);
         })
@@ -85,7 +85,7 @@ function updateTypeId(table, data,typeId,Id, tenantId,projectId){
 //////
 function updatePersonQuestion(tenantId,projectId,personalId,daySelect,monthSelect,yearSelect,personalQuestionId,newAnswer){
     return new Promise((resolve,reject)=>{
-        connection.query(`UPDATE person_question A LEFT JOIN personal B ON A.personal_id=B.personal_id SET answer=${newAnswer} WHERE A.tenant_id='${tenantId}' AND B.client_project_id=${projectId} AND A.personal_id=${personalId} AND DAY(A.date)=${daySelect} AND MONTH(A.date)=${monthSelect} AND YEAR(A.date)=${yearSelect} AND A.personal_question_id=${personalQuestionId}`,(err,result)=>{
+        connection.query(`UPDATE person_question A LEFT JOIN personal B ON A.mobile_personal_id=B.mobile_personal_id SET answer=${newAnswer} WHERE A.tenant_id='${tenantId}' AND B.client_project_id=${projectId} AND A.mobile_personal_id=${personalId} AND DAY(A.date)=${daySelect} AND MONTH(A.date)=${monthSelect} AND YEAR(A.date)=${yearSelect} AND A.mobile_personal_question_id=${personalQuestionId}`,(err,result)=>{
             if(err) return reject(err);
             resolve(result);
         })
@@ -103,7 +103,7 @@ function deleteProject(tenantId,projectId){
 //////
 function deleteVisitors(tenantId,projectId,visitorId){
     return new Promise((resolve,reject)=>{
-        connection.query(`UPDATE visitor SET is_deleted=1 WHERE tenant_id='${tenantId}' AND client_project_id=${projectId} AND visitor_id=${visitorId}`,(err,result)=>{
+        connection.query(`UPDATE visitor SET is_deleted=1 WHERE tenant_id='${tenantId}' AND client_project_id=${projectId} AND mobile_visitor_id=${visitorId}`,(err,result)=>{
             if(err) return reject(err);
             resolve(result);
         })
@@ -113,7 +113,7 @@ function deleteVisitors(tenantId,projectId,visitorId){
 //////
 function deleteVisitorDetails(tenantId,projectId,visitorId){
     return new Promise((resolve,reject)=>{
-        connection.query(`UPDATE visitor_details A LEFT JOIN visitor B ON A.visitor_id=B.visitor_id SET A.is_deleted= 1 WHERE B.tenant_id='${tenantId}' AND B.client_project_id=${projectId} AND B.visitor_id=${visitorId}`,(err,result)=>{
+        connection.query(`UPDATE visitor_details A LEFT JOIN visitor B ON A.mobile_visitor_id=B.mobile_visitor_id SET A.is_deleted= 1 WHERE B.tenant_id='${tenantId}' AND B.client_project_id=${projectId} AND B.mobile_visitor_id=${visitorId}`,(err,result)=>{
             if(err) return reject(err);
             resolve(result);
         })
@@ -131,7 +131,7 @@ function deleteTypeId(table, tenantId,projectId,typeId,Id){
 //////
 function deletePersonQuestion(tenantId,projectId,personalId,daySelect,monthSelect,yearSelect,personalQuestionId){
     return new Promise((resolve,reject)=>{
-        connection.query(`UPDATE person_question A LEFT JOIN personal B ON A.personal_id=B.personal_id SET A.is_deleted=1 WHERE A.tenant_id='${tenantId}' AND B.client_project_id=${projectId} AND A.personal_id=${personalId} AND DAY(A.date)=${daySelect} AND MONTH(A.date)=${monthSelect} AND YEAR(A.date)=${yearSelect} AND A.personal_question_id=${personalQuestionId}`,(err,result)=>{
+        connection.query(`UPDATE person_question A LEFT JOIN personal B ON A.mobile_personal_id=B.mobile_personal_id SET A.is_deleted=1 WHERE A.tenant_id='${tenantId}' AND B.client_project_id=${projectId} AND A.mobile_personal_id=${personalId} AND DAY(A.date)=${daySelect} AND MONTH(A.date)=${monthSelect} AND YEAR(A.date)=${yearSelect} AND A.mobile_personal_question_id=${personalQuestionId}`,(err,result)=>{
             if(err) return reject(err);
             resolve(result);
         })
@@ -158,7 +158,7 @@ function getNameProject(table,tenantId,projectId,){
 //////
 function getProjectIdForPersonal(tenantId,personalId,){
     return new Promise((resolve,reject)=>{
-        connection.query(`SELECT client_project_id FROM personal WHERE tenant_id='${tenantId}' AND personal_id='${personalId}' `,(err,result)=>{
+        connection.query(`SELECT client_project_id FROM personal WHERE tenant_id='${tenantId}' AND mobile_personal_id='${personalId}' `,(err,result)=>{
             if(err) return reject(err);
             resolve(result);
         })
@@ -167,7 +167,7 @@ function getProjectIdForPersonal(tenantId,personalId,){
 //////
 function getHeaderPdfPersonal(tenantId,projectId,personalId){
     return new Promise((resolve,reject)=>{
-        connection.query(`SELECT A.first_name, A.last_name, A.dni, B.name FROM personal A LEFT JOIN project B ON A.client_project_id=B.client_project_id WHERE A.tenant_id='${tenantId}' AND A.client_project_id = ${projectId} AND A.personal_id=${personalId} AND A.is_deleted=0 `,(err,result)=>{
+        connection.query(`SELECT A.first_name, A.last_name, A.dni, B.name FROM personal A LEFT JOIN project B ON A.client_project_id=B.client_project_id WHERE A.tenant_id='${tenantId}' AND A.client_project_id = ${projectId} AND A.mobile_personal_id=${personalId} AND A.is_deleted=0 `,(err,result)=>{
             if(err) return reject(err);
             resolve(result);
         })
@@ -176,7 +176,7 @@ function getHeaderPdfPersonal(tenantId,projectId,personalId){
 //////
 function getQuestions(tenantId,projectId){
     return new Promise((resolve,reject)=>{
-        connection.query(`SELECT description, question_id FROM questions WHERE tenant_id='${tenantId}' AND client_project_id = ${projectId} AND status=1`,(err,result)=>{
+        connection.query(`SELECT description, question_id FROM questions WHERE tenant_id='${tenantId}' AND client_project_id = ${projectId} AND status=1 AND is_deleted=0`,(err,result)=>{
             if(err) return reject(err);
             resolve(result);
         })
@@ -185,7 +185,7 @@ function getQuestions(tenantId,projectId){
 //////
 function  getDaysOfMonthForPersonal(tenantId,projectId,personalId,month,year){
     return new Promise((resolve,reject)=>{
-        connection.query(`SELECT  DATE_FORMAT(A.date,'%d'), A.moment FROM person_question A LEFT JOIN personal B ON A.personal_id=B.personal_id WHERE B.tenant_id='${tenantId}'  AND B.client_project_id = ${projectId} AND B.personal_id=${personalId} AND YEAR(A.date)=${year} AND MONTH(A.date)=${month} AND A.is_deleted=0 GROUP BY A.date, A.moment;`,(err,result)=>{
+        connection.query(`SELECT  DATE_FORMAT(A.date,'%d'), A.moment FROM person_question A LEFT JOIN personal B ON A.mobile_personal_id=B.mobile_personal_id WHERE B.tenant_id='${tenantId}'  AND B.client_project_id = ${projectId} AND B.mobile_personal_id=${personalId} AND YEAR(A.date)=${year} AND MONTH(A.date)=${month} AND A.is_deleted=0 GROUP BY A.date, A.moment;`,(err,result)=>{
             if(err) return reject(err);
             resolve(result);
         })
@@ -194,7 +194,7 @@ function  getDaysOfMonthForPersonal(tenantId,projectId,personalId,month,year){
 //////
 function getAnswerPersonal(tenantId,projectId,personalId,month,year,day,moment){
     return new Promise((resolve,reject)=>{
-        connection.query(`SELECT A.answer, A.question_id FROM person_question A LEFT JOIN personal B ON A.personal_id=B.personal_id WHERE B.tenant_id='${tenantId}'  AND B.client_project_id = ${projectId} AND B.personal_id=${personalId} AND YEAR(A.date)=${year} AND MONTH(A.date)=${month} AND DAY(A.date)=${day} AND A.moment=${moment} AND A.is_deleted=0 AND status=1`,(err,result)=>{
+        connection.query(`SELECT A.answer, A.mobile_question_id FROM person_question A LEFT JOIN personal B ON A.mobile_personal_id=B.mobile_personal_id WHERE B.tenant_id='${tenantId}'  AND B.client_project_id = ${projectId} AND B.mobile_personal_id=${personalId} AND YEAR(A.date)=${year} AND MONTH(A.date)=${month} AND DAY(A.date)=${day} AND A.moment=${moment} AND A.is_deleted=0 AND status=1`,(err,result)=>{
             if(err) return reject(err);
             resolve(result);
         })
@@ -263,14 +263,14 @@ function getCode(table,email){
     })
 }
 ////
-function getTenantId(table){
+/* function getTenantId(table){
     return new Promise((resolve,reject)=>{
         connection.query(`SELECT AUTO_INCREMENT FROM  INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'CQmHCA1iJi' AND  TABLE_NAME='${table}';`,(err,result)=>{
             if(err) return reject(err);
             resolve(result);
         })
     })
-}
+} */
 ////
 function lastTenantId(){
     return new Promise((resolve,reject)=>{
@@ -303,7 +303,7 @@ module.exports={
     getDaysOfMonthForPersonal,
     getCode,
     getProjectIdForPersonal,
-    getTenantId,
+    //getTenantId,
     query,
     searchUser,
     insertCodeVerification,

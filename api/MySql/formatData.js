@@ -48,7 +48,7 @@ function formatDataProyect(predata){
 function formatDataVisitor(predata){
     let data = {};
     data={
-        visitor_id:predata.mobile_visitor_id,
+        mobile_visitor_id:predata.mobile_visitor_id,
         dni:predata.dni,
         first_name:predata.first_name,
         last_name:predata.last_name,
@@ -64,8 +64,8 @@ function formatDataVisitorDetails(predata){
     let date=formatDate(predata.date);
     let time=formatTime(predata.date);
     data={
-        visitor_detail_id:predata.mobile_visitor_detail_id,
-        visitor_id:predata.visitor_id,
+        mobile_visitor_detail_id:predata.mobile_visitor_detail_id,
+        mobile_visitor_id:predata.visitor_id,
         date:date,
         time:time,
         temperature:predata.temperature,
@@ -80,7 +80,7 @@ function formatDataVisitorDetails(predata){
 function formatDataQuestions(predata){
     let data = {};
     data={
-        question_id:predata.mobile_question_id,
+        mobile_question_id:predata.mobile_question_id,
         description:predata.description,
         status:predata.status,
         type:predata.type,
@@ -94,7 +94,7 @@ function formatDataQuestions(predata){
 function formatDataPersonal(predata){
     let data = {};
     data={
-        personal_id:predata.mobile_personal_id,
+        mobile_personal_id:predata.mobile_personal_id,
         dni:predata.dni,
         first_name:predata.first_name,
         last_name:predata.last_name,
@@ -112,14 +112,14 @@ function formatDataPersonQuestion(predata){
     let data = {};
     let date=formatDate(predata.date);
     data={
-        personal_question_id:predata.mobile_personal_question_id,
+        mobile_personal_question_id:predata.mobile_personal_question_id,
         date:date,
         answer:predata.answer,
         moment:predata.moment,
         type:predata.type,
         is_deleted:0,
-        personal_id:predata.personal_id,
-        question_id:predata.question_id,
+        mobile_personal_id:predata.personal_id,
+        mobile_question_id:predata.question_id,
         tenant_id:predata.tenant_id,
         status:predata.status,
     }
